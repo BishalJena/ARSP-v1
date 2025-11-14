@@ -1,6 +1,7 @@
 """Plagiarism detection service using Sentence Transformers."""
 import httpx
 import numpy as np
+import re
 from typing import List, Dict, Any, Tuple
 from datetime import datetime
 import time

@@ -1,4 +1,6 @@
 """Topic discovery service using Semantic Scholar and arXiv APIs."""
+import asyncio
+import math
 import httpx
 from typing import List, Optional, Dict, Any
 from ..core.config import settings
