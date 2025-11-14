@@ -1,0 +1,203 @@
+{
+  "common": {
+    "app_name": "Smart Research Hub",
+    "app_subtitle": "AI-Enabled Research Support Platform",
+    "welcome": "Welcome",
+    "logout": "Logout",
+    "user": "User",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search",
+    "filter": "Filter",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "upload": "Upload"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "sign_in": "Sign In",
+    "sign_up": "Sign Up",
+    "sign_out": "Sign Out",
+    "email": "Email",
+    "password": "Password",
+    "forgot_password": "Forgot Password?",
+    "remember_me": "Remember me",
+    "create_account": "Create an account",
+    "already_have_account": "Already have an account?",
+    "dont_have_account": "Don't have an account?"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "topic_discovery": "Topic Discovery",
+    "paper_analysis": "Paper Analysis",
+    "plagiarism_check": "Plagiarism Check",
+    "journal_finder": "Journal Finder",
+    "gov_alignment": "Gov Alignment",
+    "government_alignment": "Government Alignment",
+    "impact_prediction": "Impact Prediction"
+  },
+  "dashboard": {
+    "welcome_back": "Welcome back, {{name}}!",
+    "welcome_researcher": "Welcome back, Researcher!",
+    "explore_tools": "Explore AI-powered tools to accelerate your research journey",
+    "active_projects": "Active Projects",
+    "papers_analyzed": "Papers Analyzed",
+    "plagiarism_checks": "Plagiarism Checks",
+    "start_upload": "Start by uploading a research paper",
+    "use_ai_tools": "Use our AI-powered analysis tools",
+    "ensure_originality": "Ensure originality of your work",
+    "research_tools": "Research Tools",
+    "getting_started": "Getting Started",
+    "getting_started_description": "Follow these steps to make the most of Smart Research Hub",
+    "step_1": "Upload your research paper",
+    "step_1_description": "Start by uploading a paper for AI-powered analysis",
+    "step_2": "Check for plagiarism",
+    "step_2_description": "Ensure originality before submission",
+    "step_3": "Find the perfect journal",
+    "step_3_description": "Get personalized journal recommendations",
+    "step_4": "Predict research impact",
+    "step_4_description": "Understand the potential impact of your work"
+  },
+  "topics": {
+    "title": "Topic Discovery",
+    "description": "Discover trending research topics and track their evolution",
+    "search_placeholder": "Enter research topic or keywords...",
+    "search_button": "Search Topics",
+    "trending_topics": "Trending Topics",
+    "impact_score": "Impact Score",
+    "citations": "Citations",
+    "year": "Year",
+    "source": "Source",
+    "view_details": "View Details",
+    "no_results": "No topics found",
+    "select_discipline": "Select Discipline",
+    "filters": "Filters"
+  },
+  "papers": {
+    "title": "Paper Analysis",
+    "description": "Upload and analyze research papers with AI-powered insights",
+    "upload_paper": "Upload Paper",
+    "drag_drop": "Drag and drop your PDF here, or click to browse",
+    "file_requirements": "Maximum file size: 10MB. Supported format: PDF",
+    "process_paper": "Process Paper",
+    "summary": "Summary",
+    "key_insights": "Key Insights",
+    "references": "References",
+    "related_papers": "Related Papers",
+    "analysis_complete": "Analysis Complete",
+    "processing": "Processing your paper...",
+    "upload_success": "Paper uploaded successfully",
+    "upload_error": "Failed to upload paper",
+    "no_papers": "No papers uploaded yet"
+  },
+  "plagiarism": {
+    "title": "Plagiarism Check",
+    "description": "Ensure originality with advanced plagiarism detection",
+    "check_button": "Check for Plagiarism",
+    "originality_score": "Originality Score",
+    "flagged_sections": "Flagged Sections",
+    "citation_suggestions": "Citation Suggestions",
+    "paste_text": "Paste your text here...",
+    "checking": "Checking for plagiarism...",
+    "excellent": "Excellent! Your text appears to be original.",
+    "good": "Good. Minor similarities detected.",
+    "warning": "Warning: Significant similarities found.",
+    "high_similarity": "High similarity detected. Review flagged sections.",
+    "similarity": "Similarity",
+    "source": "Source",
+    "no_issues": "No plagiarism issues detected"
+  },
+  "journals": {
+    "title": "Journal Finder",
+    "description": "Get personalized journal recommendations for your research",
+    "recommend_button": "Get Recommendations",
+    "enter_abstract": "Enter your research abstract...",
+    "keywords": "Keywords",
+    "add_keyword": "Add keyword",
+    "fit_score": "Fit Score",
+    "impact_factor": "Impact Factor",
+    "open_access": "Open Access",
+    "publication_time": "Publication Time",
+    "recommended_journals": "Recommended Journals",
+    "filters": "Filters",
+    "open_access_only": "Open Access Only",
+    "min_impact_factor": "Minimum Impact Factor",
+    "max_publication_time": "Max Time to Publish (days)",
+    "no_results": "No journals found matching your criteria",
+    "view_journal": "View Journal"
+  },
+  "government": {
+    "title": "Government Alignment",
+    "description": "Align research with government priorities and SDG goals",
+    "select_priority": "Select Government Priority",
+    "sdg_alignment": "SDG Alignment",
+    "check_alignment": "Check Alignment",
+    "alignment_score": "Alignment Score",
+    "recommendations": "Recommendations"
+  },
+  "impact": {
+    "title": "Impact Prediction",
+    "description": "Predict the real-world impact of your research",
+    "predict_button": "Predict Impact",
+    "impact_score": "Impact Score",
+    "potential_citations": "Potential Citations",
+    "societal_impact": "Societal Impact",
+    "economic_impact": "Economic Impact",
+    "environmental_impact": "Environmental Impact"
+  },
+  "consent": {
+    "title": "Data Privacy Consent",
+    "description": "We value your privacy and are committed to protecting your data in accordance with the Digital Personal Data Protection (DPDP) Act, 2023.",
+    "message": "By using this platform, you consent to the collection and processing of your research data for the purpose of providing AI-powered research support services. Your data will be stored securely and will not be shared with third parties without your explicit consent.",
+    "accept": "I Accept",
+    "decline": "I Decline",
+    "learn_more": "Learn More About DPDP",
+    "required": "Consent is required to use this platform"
+  },
+  "errors": {
+    "generic": "An error occurred. Please try again.",
+    "network": "Network error. Please check your connection.",
+    "unauthorized": "You are not authorized to perform this action.",
+    "not_found": "The requested resource was not found.",
+    "validation": "Please check your input and try again.",
+    "file_too_large": "File size exceeds the maximum limit.",
+    "invalid_file_type": "Invalid file type. Please upload a PDF.",
+    "upload_failed": "Upload failed. Please try again.",
+    "processing_failed": "Processing failed. Please try again."
+  },
+  "plurals": {
+    "paper": {
+      "zero": "No papers",
+      "one": "{{count}} paper",
+      "other": "{{count}} papers"
+    },
+    "citation": {
+      "zero": "No citations",
+      "one": "{{count}} citation",
+      "other": "{{count}} citations"
+    },
+    "result": {
+      "zero": "No results",
+      "one": "{{count}} result",
+      "other": "{{count}} results"
+    },
+    "journal": {
+      "zero": "No journals",
+      "one": "{{count}} journal",
+      "other": "{{count}} journals"
+    },
+    "topic": {
+      "zero": "No topics",
+      "one": "{{count}} topic",
+      "other": "{{count}} topics"
+    }
+  }
+}
