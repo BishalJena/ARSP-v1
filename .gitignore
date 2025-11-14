@@ -3,9 +3,23 @@ node_modules/
 .pnp
 .pnp.js
 
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
 # Testing
 coverage/
 *.log
+.pytest_cache/
+.coverage
+htmlcov/
 
 # Production
 build/
@@ -19,6 +33,7 @@ out/
 .env.development.local
 .env.test.local
 .env.production.local
+*.env
 
 # IDE
 .vscode/
@@ -26,6 +41,7 @@ out/
 *.swp
 *.swo
 *~
+.cursor/
 
 # OS
 .DS_Store
@@ -34,3 +50,8 @@ Thumbs.db
 # Misc
 *.tsbuildinfo
 .turbo/
+
+# Temporary files
+*.tmp
+temp/
+.temp/
