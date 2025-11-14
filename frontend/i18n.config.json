@@ -1,0 +1,85 @@
+{
+  "$schema": "https://lingo.dev/schema/i18n.config.json",
+  "version": "1.0",
+  "sourceLocale": "en",
+  "targetLocales": [
+    "hi",
+    "te",
+    "ta",
+    "bn",
+    "mr",
+    "zh",
+    "es",
+    "fr",
+    "ar",
+    "ru",
+    "pt",
+    "de"
+  ],
+  "localesDir": "./locales",
+  "translationEngine": "lingo-ai",
+  "glossary": {
+    "academic": {
+      "plagiarism": {
+        "en": "plagiarism",
+        "hi": "साहित्यिक चोरी",
+        "zh": "剽窃",
+        "es": "plagio"
+      },
+      "literature review": {
+        "en": "literature review",
+        "hi": "साहित्य समीक्षा",
+        "zh": "文献综述",
+        "es": "revisión de literatura"
+      },
+      "citation": {
+        "en": "citation",
+        "hi": "उद्धरण",
+        "zh": "引用",
+        "es": "cita"
+      },
+      "journal": {
+        "en": "journal",
+        "hi": "पत्रिका",
+        "zh": "期刊",
+        "es": "revista"
+      },
+      "research": {
+        "en": "research",
+        "hi": "अनुसंधान",
+        "zh": "研究",
+        "es": "investigación"
+      },
+      "abstract": {
+        "en": "abstract",
+        "hi": "सार",
+        "zh": "摘要",
+        "es": "resumen"
+      },
+      "manuscript": {
+        "en": "manuscript",
+        "hi": "पांडुलिपि",
+        "zh": "手稿",
+        "es": "manuscrito"
+      }
+    }
+  },
+  "contexts": {
+    "legal": ["consent", "privacy", "data protection", "DPDP"],
+    "academic": ["research", "paper", "journal", "citation", "plagiarism"],
+    "ui": ["button", "menu", "dialog", "form", "error"]
+  },
+  "pluralization": {
+    "enabled": true,
+    "rules": {
+      "en": ["zero", "one", "other"],
+      "hi": ["one", "other"],
+      "zh": ["other"],
+      "es": ["one", "other"]
+    }
+  },
+  "validation": {
+    "completeness": true,
+    "frozen": false
+  }
+}

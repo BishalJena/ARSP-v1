@@ -1,13 +1,13 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { apiClient } from './api-client';
+import { useUser, useAuth as useClerkAuth } from '@clerk/nextjs';
 
 interface User {
-  id: number;
+  id: string;
   email: string;
   full_name: string;
-  role: string;
+  role?: string;
   institution?: string;
   research_interests?: string[];
 }
@@ -15,49 +15,35 @@ interface User {
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (data: { email: string; password: string; full_name: string }) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   isAuthenticated: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const { user: clerkUser, isLoaded } = useUser();
+  const { signOut } = useClerkAuth();
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in on mount
-    const checkAuth = async () => {
-      try {
-        const currentUser = await apiClient.getCurrentUser();
-        setUser(currentUser);
-      } catch (error) {
-        // Silently handle authentication check failure - this is expected for new users
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (isLoaded && clerkUser) {
+      // Map Clerk user to our User interface
+      setUser({
+        id: clerkUser.id,
+        email: clerkUser.primaryEmailAddress?.emailAddress || '',
+        full_name: clerkUser.fullName || clerkUser.firstName || 'User',
+        role: clerkUser.publicMetadata?.role as string || undefined,
+        institution: clerkUser.publicMetadata?.institution as string || undefined,
+        research_interests: clerkUser.publicMetadata?.research_interests as string[] || undefined,
+      });
+    } else if (isLoaded && !clerkUser) {
+      setUser(null);
+    }
+  }, [clerkUser, isLoaded]);
 
-    checkAuth();
-  }, []);
-
-  const login = async (email: string, password: string) => {
-    await apiClient.login(email, password);
-    const currentUser = await apiClient.getCurrentUser();
-    setUser(currentUser);
-  };
-
-  const register = async (data: { email: string; password: string; full_name: string }) => {
-    await apiClient.register(data);
-    // Auto-login after registration
-    await login(data.email, data.password);
-  };
-
-  const logout = () => {
-    apiClient.clearToken();
+  const logout = async () => {
+    await signOut();
     setUser(null);
   };
 
@@ -65,9 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     <AuthContext.Provider
       value={{
         user,
-        loading,
-        login,
-        register,
+        loading: !isLoaded,
         logout,
         isAuthenticated: !!user,
       }}

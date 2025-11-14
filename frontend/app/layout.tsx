@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { ClerkProvider } from '@clerk/nextjs';
 import { AuthProvider } from "@/lib/auth-context";
+import { LanguageProvider } from "@/lib/useLingo";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Smart Research Hub - AP Government Research Platform",
-  description: "AI-powered research platform for Andhra Pradesh researchers",
+  title: "Smart Research Hub - AI-Enabled Research Support Platform",
+  description: "AI-powered multilingual research platform with topic discovery, plagiarism detection, and journal recommendations",
 };
 
 export default function RootLayout({
@@ -24,14 +26,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <AuthProvider>
-          {children}
-        </AuthProvider>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          <LanguageProvider>
+            <AuthProvider>
+              {children}
+            </AuthProvider>
+          </LanguageProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
