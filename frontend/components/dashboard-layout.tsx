@@ -132,7 +132,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                   className={`
                     flex items-center gap-3 px-3 py-2 rounded-lg transition-colors
                     ${isActive
-                      ? 'bg-gray-200 text-gray-900'
+                      ? 'border-2 border-gray-400 text-gray-900'
                       : 'text-gray-700 hover:bg-gray-100'
                     }
                   `}

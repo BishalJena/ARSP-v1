@@ -14,14 +14,16 @@ import { useLingo } from '@/lib/useLingo';
 import { BookOpen, Loader2, Star, TrendingUp, Clock } from 'lucide-react';
 
 interface Journal {
-  journal_name: string;
-  publisher: string;
+  id: string;
+  name: string;
+  description?: string;
   impact_factor: number;
-  match_score: number;
-  open_access: boolean;
-  avg_time_to_publish: number;
-  acceptance_rate: number;
-  issn: string;
+  h_index?: number;
+  is_open_access: boolean;
+  publication_time_months?: number;
+  domain: string;
+  url?: string;
+  fit_score: number;
 }
 
 export default function JournalsPage() {
@@ -59,7 +61,7 @@ export default function JournalsPage() {
         language: locale,
       });
 
-      setJournals(response.recommendations || []);
+      setJournals(response.journals || []);
     } catch (err: any) {
       setError(err.message || t('errors.recommend_failed'));
     } finally {
@@ -155,26 +157,26 @@ export default function JournalsPage() {
 
             <div className="space-y-4">
               {journals.map((journal, index) => (
-                <Card key={index} className="hover:shadow-md transition-shadow">
+                <Card key={journal.id || index} className="hover:shadow-md transition-shadow">
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <CardTitle className="text-lg">{journal.journal_name}</CardTitle>
+                        <CardTitle className="text-lg">{journal.name}</CardTitle>
                         <CardDescription className="mt-1">
-                          {journal.publisher} • ISSN: {journal.issn}
+                          {journal.domain} {journal.description ? `• ${journal.description.substring(0, 100)}...` : ''}
                         </CardDescription>
                       </div>
                       <div className="flex flex-col items-end gap-2">
-                        {journal.open_access && (
+                        {journal.is_open_access && (
                           <Badge variant="default" className="bg-blue-600">
                             {t('journals.open_access')}
                           </Badge>
                         )}
                         <Badge
                           variant="outline"
-                          className={`font-semibold ${getMatchColor(journal.match_score)}`}
+                          className={`font-semibold ${getMatchColor(journal.fit_score / 100)}`}
                         >
-                          {(journal.match_score * 100).toFixed(0)}% {t('journals.match_score')}
+                          {journal.fit_score.toFixed(0)}% {t('journals.match_score')}
                         </Badge>
                       </div>
                     </div>
@@ -193,11 +195,11 @@ export default function JournalsPage() {
 
                       <div className="space-y-1">
                         <div className="flex items-center gap-2 text-muted-foreground">
-                          <TrendingUp className="h-4 w-4" />
-                          <span className="text-sm">{t('journals.acceptance_rate')}</span>
+                          <BookOpen className="h-4 w-4" />
+                          <span className="text-sm">H-Index</span>
                         </div>
                         <p className="text-2xl font-bold text-gray-900">
-                          {(journal.acceptance_rate * 100).toFixed(0)}%
+                          {journal.h_index || 'N/A'}
                         </p>
                       </div>
 
@@ -207,7 +209,7 @@ export default function JournalsPage() {
                           <span className="text-sm">{t('journals.time_to_publish')}</span>
                         </div>
                         <p className="text-2xl font-bold text-gray-900">
-                          {journal.avg_time_to_publish} days
+                          {journal.publication_time_months ? `${journal.publication_time_months} months` : 'N/A'}
                         </p>
                       </div>
                     </div>

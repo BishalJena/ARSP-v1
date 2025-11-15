@@ -1,11 +1,12 @@
-"""Translation service using Lingo.dev API."""
+"""Translation service using Google Translate (via deep-translator)."""
 import httpx
 from typing import Dict, List, Optional, Any
 from app.core.config import settings
+from deep_translator import GoogleTranslator
 
 
 class TranslationService:
-    """Service for translating text using Lingo.dev API."""
+    """Service for translating text using Google Translate."""
 
     def __init__(self):
         self.api_url = "https://api.lingo.dev/v1"
@@ -23,6 +24,22 @@ class TranslationService:
             "academic",
             "scientific",
         ]
+        # Language code mapping for Google Translate
+        self.lang_map = {
+            'zh': 'zh-CN',  # Chinese simplified
+            'te': 'te',     # Telugu
+            'ta': 'ta',     # Tamil
+            'hi': 'hi',     # Hindi
+            'es': 'es',     # Spanish
+            'fr': 'fr',     # French
+            'de': 'de',     # German
+            'ja': 'ja',     # Japanese
+            'ko': 'ko',     # Korean
+            'pt': 'pt',     # Portuguese
+            'bn': 'bn',     # Bengali
+            'mr': 'mr',     # Marathi
+            'en': 'en'      # English
+        }
 
     async def translate_text(
         self,
@@ -32,13 +49,13 @@ class TranslationService:
         context: Optional[List[str]] = None,
     ) -> str:
         """
-        Translate text from source to target language.
+        Translate text from source to target language using Google Translate.
 
         Args:
             text: Text to translate
             target_language: Target language code (e.g., 'hi', 'zh', 'es')
             source_language: Source language code (default: 'en')
-            context: Optional context tags for better translation
+            context: Optional context tags (not used with Google Translate)
 
         Returns:
             Translated text
@@ -47,32 +64,22 @@ class TranslationService:
         if target_language == source_language:
             return text
 
-        # If Lingo API key is not set, return original text
-        if not self.api_key or self.api_key == "":
+        # If text is empty, return it
+        if not text or text.strip() == "":
             return text
 
         try:
-            async with httpx.AsyncClient(timeout=30.0) as client:
-                payload = {
-                    "text": text,
-                    "source_locale": source_language,
-                    "target_locale": target_language,
-                    "context": context or self.academic_context,
-                }
+            # Map language codes
+            source = self.lang_map.get(source_language, source_language)
+            target = self.lang_map.get(target_language, target_language)
 
-                response = await client.post(
-                    f"{self.api_url}/translate", headers=self.headers, json=payload
-                )
-
-                if response.status_code == 200:
-                    data = response.json()
-                    return data.get("translated_text", text)
-                else:
-                    # Fallback to original text if translation fails
-                    return text
+            # Use Google Translate
+            translator = GoogleTranslator(source=source, target=target)
+            translated = translator.translate(text)
+            return translated if translated else text
 
         except Exception as e:
-            # Fallback to original text if API call fails
+            # Fallback to original text if translation fails
             print(f"Translation failed: {str(e)}")
             return text
 
@@ -84,13 +91,13 @@ class TranslationService:
         context: Optional[List[str]] = None,
     ) -> List[str]:
         """
-        Translate multiple texts in a single request.
+        Translate multiple texts using Google Translate.
 
         Args:
             texts: List of texts to translate
             target_language: Target language code
             source_language: Source language code (default: 'en')
-            context: Optional context tags
+            context: Optional context tags (not used)
 
         Returns:
             List of translated texts
@@ -98,29 +105,26 @@ class TranslationService:
         if target_language == source_language:
             return texts
 
-        if not self.api_key or self.api_key == "":
-            return texts
-
         try:
-            async with httpx.AsyncClient(timeout=30.0) as client:
-                payload = {
-                    "texts": texts,
-                    "source_locale": source_language,
-                    "target_locale": target_language,
-                    "context": context or self.academic_context,
-                }
+            # Map language codes
+            source = self.lang_map.get(source_language, source_language)
+            target = self.lang_map.get(target_language, target_language)
 
-                response = await client.post(
-                    f"{self.api_url}/translate/batch",
-                    headers=self.headers,
-                    json=payload,
-                )
+            # Translate each text
+            translated = []
+            translator = GoogleTranslator(source=source, target=target)
 
-                if response.status_code == 200:
-                    data = response.json()
-                    return data.get("translated_texts", texts)
+            for text in texts:
+                if not text or text.strip() == "":
+                    translated.append(text)
                 else:
-                    return texts
+                    try:
+                        result = translator.translate(text)
+                        translated.append(result if result else text)
+                    except:
+                        translated.append(text)
+
+            return translated
 
         except Exception as e:
             print(f"Batch translation failed: {str(e)}")

@@ -12,15 +12,15 @@ import { FileText, Upload, Loader2, Trash2, Eye } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
 interface Paper {
-  id: number;
-  title: string;
-  filename: string;
-  uploaded_at: string;
+  id: string;
+  file_name: string;
+  file_size: number;
   processed: boolean;
   summary?: string;
   key_findings?: string[];
   methodology?: string;
   created_at: string;
+  paper_title?: string;
 }
 
 export default function PapersPage() {
@@ -184,48 +184,65 @@ export default function PapersPage() {
 
             <div className="space-y-4">
               {papers.map((paper) => (
-                <Card key={paper.id}>
-                  <CardHeader>
+                <Card key={paper.id} className="border-2 border-gray-200">
+                  <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <CardTitle className="text-lg">{paper.title}</CardTitle>
-                        <CardDescription className="mt-1">
-                          {paper.filename} • {t('papers.uploaded').replace('{date}', new Date(paper.uploaded_at).toLocaleDateString())}
+                        <div className="flex items-center gap-2 mb-2">
+                          <FileText className="h-5 w-5 text-blue-600" />
+                          {paper.processed ? (
+                            <Badge variant="default" className="bg-green-600">
+                              {t('papers.status_processed')}
+                            </Badge>
+                          ) : (
+                            <Badge variant="outline">{t('papers.status_pending')}</Badge>
+                          )}
+                        </div>
+                        <CardTitle className="text-xl text-gray-900 mb-1">
+                          {paper.paper_title || paper.file_name.replace('.pdf', '')}
+                        </CardTitle>
+                        <CardDescription className="text-sm">
+                          📄 {paper.file_name} • {(paper.file_size / 1024).toFixed(1)} KB • {new Date(paper.created_at).toLocaleString()}
                         </CardDescription>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {paper.processed ? (
-                          <Badge variant="default" className="bg-green-600">
-                            {t('papers.status_processed')}
-                          </Badge>
-                        ) : (
-                          <Badge variant="outline">{t('papers.status_pending')}</Badge>
-                        )}
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-4">
+                  <CardContent className="space-y-6 pt-6">
                     {paper.processed && paper.summary && (
-                      <div className="space-y-2">
-                        <h4 className="font-semibold text-sm">{t('papers.summary')}</h4>
-                        <p className="text-sm text-gray-700">{paper.summary}</p>
+                      <div className="space-y-3 bg-blue-50 p-4 rounded-lg border border-blue-200">
+                        <div className="flex items-center gap-2">
+                          <div className="h-1 w-1 bg-blue-600 rounded-full"></div>
+                          <h4 className="font-bold text-base text-blue-900">{t('papers.summary')}</h4>
+                        </div>
+                        <p className="text-sm text-gray-800 leading-relaxed pl-3 border-l-2 border-blue-400">
+                          {paper.summary}
+                        </p>
                       </div>
                     )}
 
                     {paper.processed && paper.methodology && (
-                      <div className="space-y-2">
-                        <h4 className="font-semibold text-sm">{t('papers.methodology')}</h4>
-                        <p className="text-sm text-gray-700">{paper.methodology}</p>
+                      <div className="space-y-3 bg-purple-50 p-4 rounded-lg border border-purple-200">
+                        <div className="flex items-center gap-2">
+                          <div className="h-1 w-1 bg-purple-600 rounded-full"></div>
+                          <h4 className="font-bold text-base text-purple-900">{t('papers.methodology')}</h4>
+                        </div>
+                        <p className="text-sm text-gray-800 leading-relaxed pl-3 border-l-2 border-purple-400">
+                          {paper.methodology}
+                        </p>
                       </div>
                     )}
 
                     {paper.processed && paper.key_findings && paper.key_findings.length > 0 && (
-                      <div className="space-y-2">
-                        <h4 className="font-semibold text-sm">{t('papers.key_findings')}</h4>
-                        <ul className="list-disc list-inside space-y-1">
+                      <div className="space-y-3 bg-green-50 p-4 rounded-lg border border-green-200">
+                        <div className="flex items-center gap-2">
+                          <div className="h-1 w-1 bg-green-600 rounded-full"></div>
+                          <h4 className="font-bold text-base text-green-900">{t('papers.key_findings')}</h4>
+                        </div>
+                        <ul className="space-y-2 pl-3">
                           {paper.key_findings.map((finding, idx) => (
-                            <li key={idx} className="text-sm text-gray-700">
-                              {finding}
+                            <li key={idx} className="text-sm text-gray-800 leading-relaxed flex gap-2">
+                              <span className="text-green-600 font-bold">•</span>
+                              <span className="flex-1">{finding}</span>
                             </li>
                           ))}
                         </ul>
