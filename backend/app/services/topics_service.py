@@ -11,8 +11,10 @@ class TopicsService:
 
     def __init__(self):
         self.semantic_scholar_base = "https://api.semanticscholar.org/graph/v1"
-        self.arxiv_base = "http://export.arxiv.org/api"
-        self.headers = {}
+        self.arxiv_base = "https://export.arxiv.org/api"  # Changed to https
+        self.headers = {
+            "User-Agent": "ARSP-Research-Platform/1.0 (mailto:research@arsp.dev)"
+        }
 
         if settings.SEMANTIC_SCHOLAR_API_KEY:
             self.headers["x-api-key"] = settings.SEMANTIC_SCHOLAR_API_KEY
@@ -29,7 +31,7 @@ class TopicsService:
         Combines results from Semantic Scholar and arXiv.
         """
         # Search both APIs in parallel
-        async with httpx.AsyncClient(timeout=30.0) as client:
+        async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
             tasks = [
                 self._search_semantic_scholar(client, query, limit),
                 self._search_arxiv(client, query, limit)
@@ -41,11 +43,21 @@ class TopicsService:
 
         # Process Semantic Scholar results
         if not isinstance(results[0], Exception):
-            topics.extend(self._format_semantic_scholar_results(results[0]))
+            try:
+                topics.extend(self._format_semantic_scholar_results(results[0]))
+            except Exception as e:
+                print(f"Error formatting Semantic Scholar results: {e}")
+        else:
+            print(f"Semantic Scholar API error: {results[0]}")
 
         # Process arXiv results
         if not isinstance(results[1], Exception):
-            topics.extend(self._format_arxiv_results(results[1]))
+            try:
+                topics.extend(self._format_arxiv_results(results[1]))
+            except Exception as e:
+                print(f"Error formatting arXiv results: {e}")
+        else:
+            print(f"arXiv API error: {results[1]}")
 
         # Calculate impact scores and sort
         topics = self._calculate_impact_scores(topics)
@@ -59,12 +71,13 @@ class TopicsService:
         query: str,
         limit: int
     ) -> Dict[str, Any]:
-        """Search Semantic Scholar API."""
+        """Search Semantic Scholar API using regular search endpoint (no auth required)."""
+        # Use regular search endpoint - bulk requires API key
         url = f"{self.semantic_scholar_base}/paper/search"
         params = {
             "query": query,
-            "limit": limit,
-            "fields": "title,abstract,year,authors,citationCount,influentialCitationCount,externalIds,url"
+            "limit": min(limit, 100),
+            "fields": "title,year,citationCount"
         }
 
         response = await client.get(url, params=params, headers=self.headers)
@@ -92,18 +105,21 @@ class TopicsService:
         return response.text
 
     def _format_semantic_scholar_results(self, data: Dict[str, Any]) -> List[Dict[str, Any]]:
-        """Format Semantic Scholar results."""
+        """Format Semantic Scholar bulk search results."""
         topics = []
 
         for paper in data.get("data", []):
+            # Build Semantic Scholar URL from paper ID
+            paper_id = paper.get("paperId", "")
+            paper_url = f"https://www.semanticscholar.org/paper/{paper_id}" if paper_id else None
+
             topics.append({
-                "id": f"s2_{paper.get('paperId', '')}",
+                "id": f"s2_{paper_id}",
                 "title": paper.get("title", ""),
-                "description": paper.get("abstract", "")[:500] if paper.get("abstract") else "",
+                "description": "",  # Abstract not available in bulk search
                 "source": "semantic_scholar",
-                "url": paper.get("url"),
+                "url": paper_url,
                 "citation_count": paper.get("citationCount", 0),
-                "influential_citations": paper.get("influentialCitationCount", 0),
                 "year": paper.get("year"),
                 "raw_score": paper.get("citationCount", 0)
             })

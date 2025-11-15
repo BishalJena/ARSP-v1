@@ -15,7 +15,7 @@ class TopicResponse(BaseModel):
     id: str
     title: str
     description: str
-    impact_score: float = Field(..., ge=0, le=100)
+    impact_score: float = Field(..., ge=0)  # No upper limit - can be based on citation counts
     source: str  # 'semantic_scholar' or 'arxiv'
     url: Optional[str] = None
     citation_count: Optional[int] = None

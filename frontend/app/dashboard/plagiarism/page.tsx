@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { DashboardLayout } from '@/components/dashboard-layout';
+import { useLingo } from '@/lib/useLingo';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -9,7 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { apiClient } from '@/lib/api-client';
+import { useAuthenticatedAPI } from '@/lib/api-client-auth';
 import { Shield, Loader2, AlertTriangle, CheckCircle } from 'lucide-react';
 
 interface SimilarSource {
@@ -27,6 +28,8 @@ interface PlagiarismResult {
 }
 
 export default function PlagiarismPage() {
+  const apiClient = useAuthenticatedAPI();
+  const { locale, t } = useLingo();
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -36,7 +39,7 @@ export default function PlagiarismPage() {
     e.preventDefault();
 
     if (!text.trim()) {
-      setError('Please enter text to check');
+      setError(t('plagiarism.text_placeholder'));
       return;
     }
 
@@ -48,6 +51,7 @@ export default function PlagiarismPage() {
       const response: any = await apiClient.checkPlagiarism({
         text: text.trim(),
         check_online: true,
+        language: locale,  // Pass current language to backend
       });
 
       setResult({
@@ -55,10 +59,10 @@ export default function PlagiarismPage() {
         plagiarism_detected: response.plagiarism_detected || false,
         similar_sources: response.similar_sources || [],
         confidence: response.confidence || 0,
-        language: response.language || 'en',
+        language: response.language || locale,
       });
     } catch (err: any) {
-      setError(err.message || 'Failed to check plagiarism');
+      setError(err.message || t('errors.check_failed'));
     } finally {
       setLoading(false);
     }
@@ -80,9 +84,9 @@ export default function PlagiarismPage() {
     <DashboardLayout>
       <div className="space-y-6">
         <div>
-          <h2 className="text-3xl font-bold text-gray-900">Plagiarism Check</h2>
+          <h2 className="text-3xl font-bold text-gray-900">{t('plagiarism.title')}</h2>
           <p className="text-gray-600 mt-2">
-            Ensure originality with advanced AI-powered plagiarism detection
+            {t('plagiarism.description')}
           </p>
         </div>
 
@@ -91,26 +95,26 @@ export default function PlagiarismPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5" />
-              Check Your Text
+              {t('plagiarism.check_title')}
             </CardTitle>
             <CardDescription>
-              Paste your text below to check for plagiarism and get an originality score
+              {t('plagiarism.check_description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleCheck} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="text">Text to Check</Label>
+                <Label htmlFor="text">{t('plagiarism.check_title')}</Label>
                 <Textarea
                   id="text"
-                  placeholder="Paste your research text here..."
+                  placeholder={t('plagiarism.text_placeholder')}
                   value={text}
                   onChange={(e) => setText(e.target.value)}
                   disabled={loading}
                   className="min-h-[200px]"
                 />
                 <p className="text-sm text-muted-foreground">
-                  {text.length} characters
+                  {text.length} {t('common.characters') || 'characters'}
                 </p>
               </div>
 
@@ -118,12 +122,12 @@ export default function PlagiarismPage() {
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Checking for Plagiarism...
+                    {t('plagiarism.checking')}
                   </>
                 ) : (
                   <>
                     <Shield className="mr-2 h-4 w-4" />
-                    Check Plagiarism
+                    {t('plagiarism.button_check')}
                   </>
                 )}
               </Button>
@@ -150,7 +154,7 @@ export default function PlagiarismPage() {
                   ) : (
                     <CheckCircle className="h-5 w-5 text-green-600" />
                   )}
-                  Originality Score
+                  {t('plagiarism.originality_score')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -159,13 +163,13 @@ export default function PlagiarismPage() {
                     <div className={`text-6xl font-bold ${getScoreColor(result.originality_score)}`}>
                       {result.originality_score.toFixed(1)}%
                     </div>
-                    <p className="text-muted-foreground mt-2">Originality</p>
+                    <p className="text-muted-foreground mt-2">{t('plagiarism.originality_score')}</p>
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <span>Score</span>
+                    <span>{t('plagiarism.originality_score')}</span>
                     <span className="font-medium">{result.originality_score.toFixed(1)}%</span>
                   </div>
                   <Progress
@@ -175,9 +179,9 @@ export default function PlagiarismPage() {
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Confidence</span>
+                  <span className="text-sm text-muted-foreground">{t('plagiarism.confidence')}</span>
                   <Badge variant="outline">
-                    {(result.confidence * 100).toFixed(0)}% confident
+                    {(result.confidence * 100).toFixed(0)}% {t('plagiarism.confidence')}
                   </Badge>
                 </div>
 
@@ -185,14 +189,14 @@ export default function PlagiarismPage() {
                   <Alert variant="destructive">
                     <AlertTriangle className="h-4 w-4" />
                     <AlertDescription>
-                      Potential plagiarism detected. Review similar sources below.
+                      {t('plagiarism.plagiarism_level_low')}
                     </AlertDescription>
                   </Alert>
                 ) : (
                   <Alert className="border-green-200 bg-green-50">
                     <CheckCircle className="h-4 w-4 text-green-600" />
                     <AlertDescription className="text-green-800">
-                      No significant plagiarism detected. Your content appears original.
+                      {t('plagiarism.plagiarism_level_high')}
                     </AlertDescription>
                   </Alert>
                 )}
@@ -203,9 +207,9 @@ export default function PlagiarismPage() {
             {result.similar_sources && result.similar_sources.length > 0 && (
               <Card>
                 <CardHeader>
-                  <CardTitle>Similar Sources Found</CardTitle>
+                  <CardTitle>{t('plagiarism.similar_sources')}</CardTitle>
                   <CardDescription>
-                    {result.similar_sources.length} potential matches detected
+                    {result.similar_sources.length} {t('plagiarism.similar_sources')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -216,22 +220,22 @@ export default function PlagiarismPage() {
                         className="border rounded-lg p-4 space-y-3"
                       >
                         <div className="flex items-center justify-between">
-                          <h4 className="font-semibold text-sm">Source {index + 1}</h4>
+                          <h4 className="font-semibold text-sm">{t('plagiarism.similar_sources')} {index + 1}</h4>
                           <Badge
                             variant={source.similarity > 0.7 ? 'destructive' : 'outline'}
                           >
-                            {(source.similarity * 100).toFixed(1)}% similar
+                            {(source.similarity * 100).toFixed(1)}% {t('plagiarism.similarity')}
                           </Badge>
                         </div>
 
                         <div className="space-y-2">
-                          <p className="text-sm text-muted-foreground">Source:</p>
+                          <p className="text-sm text-muted-foreground">{t('plagiarism.similar_sources')}:</p>
                           <p className="text-sm font-medium">{source.source}</p>
                         </div>
 
                         {source.matched_text && (
                           <div className="space-y-2">
-                            <p className="text-sm text-muted-foreground">Matched Text:</p>
+                            <p className="text-sm text-muted-foreground">{t('plagiarism.matched_text')}:</p>
                             <div className="bg-yellow-50 border border-yellow-200 rounded p-3">
                               <p className="text-sm text-gray-700 italic">
                                 "{source.matched_text}"
@@ -254,10 +258,10 @@ export default function PlagiarismPage() {
             <CardContent>
               <Shield className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Ready to Check
+                {t('plagiarism.check_title')}
               </h3>
               <p className="text-gray-600 mb-4">
-                Paste your text above and click "Check Plagiarism" to get started
+                {t('plagiarism.check_description')}
               </p>
             </CardContent>
           </Card>

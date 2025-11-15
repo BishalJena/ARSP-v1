@@ -11,7 +11,8 @@ class JournalsService:
 
     def __init__(self):
         self.hf_api_url = "https://api-inference.huggingface.co/models"
-        self.model = "sentence-transformers/all-mpnet-base-v2"
+        # Use active model - paraphrase-MiniLM-L6-v2 is smaller, faster, and currently supported
+        self.model = "sentence-transformers/paraphrase-MiniLM-L6-v2"
 
         self.hf_headers = {}
         if settings.HF_API_KEY:
@@ -165,32 +166,55 @@ class JournalsService:
         Counts how many keywords appear in journal name/description.
         """
         scored_journals = []
+        abstract_lower = abstract.lower()
 
         for journal in journals:
             score = 0
             name_lower = journal.get("name", "").lower()
             desc_lower = journal.get("description", "").lower()
+            domain_lower = journal.get("domain", "").lower()
 
             # Count keyword matches
             for keyword in keywords:
                 keyword_lower = keyword.lower()
                 if keyword_lower in name_lower:
-                    score += 20
+                    score += 25
                 if keyword_lower in desc_lower:
+                    score += 15
+                if keyword_lower in domain_lower:
                     score += 10
 
-            # Boost by impact factor
+            # Check abstract words against journal fields
+            abstract_words = set(abstract_lower.split())
+            name_words = set(name_lower.split())
+            desc_words = set(desc_lower.split())
+
+            # Calculate word overlap
+            name_overlap = len(abstract_words & name_words)
+            desc_overlap = len(abstract_words & desc_words)
+            score += name_overlap * 5
+            score += desc_overlap * 2
+
+            # Boost by impact factor (logarithmic to avoid dominating)
             impact_factor = journal.get("impact_factor", 0)
-            score += min(30, impact_factor * 5)
+            if impact_factor > 0:
+                import math
+                score += min(25, math.log(1 + impact_factor) * 10)
+
+            # Boost Computer Science journals for ML/AI abstracts
+            if any(term in abstract_lower for term in ['machine learning', 'ai', 'artificial intelligence', 'deep learning', 'neural']):
+                if 'computer science' in domain_lower or 'machine learning' in name_lower:
+                    score += 30
 
             journal_copy = journal.copy()
-            journal_copy["fit_score"] = min(100, score)
+            journal_copy["fit_score"] = min(100, round(score, 2))
             scored_journals.append(journal_copy)
 
         # Sort by score
         scored_journals.sort(key=lambda x: x["fit_score"], reverse=True)
 
-        return scored_journals[:10]
+        # Return at least some results even if scores are low
+        return scored_journals[:10] if scored_journals else journals[:10]
 
     async def get_journal_by_id(self, journal_id: str) -> Optional[Dict[str, Any]]:
         """Get journal details by ID."""

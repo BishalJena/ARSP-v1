@@ -1,7 +1,7 @@
 'use client';
 
 import { useLingo } from '@/lib/useLingo';
-import { getLanguageName, getLanguageFlag, supportedLocales } from '@/lib/lingo';
+import { getLanguageName, getLanguageFlag, supportedLocales } from '@/lib/lingo-config';
 import {
   DropdownMenu,
   DropdownMenuContent,

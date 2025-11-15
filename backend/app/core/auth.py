@@ -1,12 +1,14 @@
 """Authentication with Clerk."""
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from typing import Optional
 import jwt
 from jwt import PyJWKClient
 from .config import settings
 
 
 security = HTTPBearer()
+optional_security = HTTPBearer(auto_error=False)
 
 
 def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> dict:
@@ -53,6 +55,45 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=f"Authentication failed: {str(e)}"
         )
+
+
+def get_current_user_optional(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(optional_security)
+) -> Optional[dict]:
+    """
+    Verify Clerk JWT token and return user info, or None if no token provided.
+
+    This allows endpoints to work without authentication for demo purposes.
+    """
+    if not credentials:
+        return None
+
+    try:
+        token = credentials.credentials
+
+        # Get Clerk's JWKS URL
+        clerk_domain = settings.CLERK_PUBLISHABLE_KEY.split("_")[1]
+        jwks_url = f"https://{clerk_domain}.clerk.accounts.dev/.well-known/jwks.json"
+
+        # Verify token using Clerk's public key
+        jwks_client = PyJWKClient(jwks_url)
+        signing_key = jwks_client.get_signing_key_from_jwt(token)
+
+        payload = jwt.decode(
+            token,
+            signing_key.key,
+            algorithms=["RS256"],
+            options={"verify_exp": True}
+        )
+
+        return {
+            "user_id": payload.get("sub"),
+            "email": payload.get("email"),
+            "full_name": payload.get("name"),
+        }
+    except Exception:
+        # Return None if token is invalid instead of raising error
+        return None
 
 
 # Optional: Dependency to get user from Supabase

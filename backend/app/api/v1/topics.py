@@ -4,7 +4,9 @@ from typing import Optional
 from pydantic import BaseModel
 from ...schemas.topics import TopicQuery, TopicListResponse, TopicResponse
 from ...services.topics_service import topics_service
-from ...core.auth import get_current_user
+from ...services.semantic_scholar_service import semantic_scholar_service
+from ...services.translation_service import translation_service
+from ...core.auth import get_current_user, get_current_user_optional
 
 router = APIRouter()
 
@@ -17,37 +19,53 @@ class TopicEvolutionRequest(BaseModel):
 
 @router.get("/trending", response_model=TopicListResponse)
 async def get_trending_topics(
-    query: str,
+    query: str = "",
     discipline: Optional[str] = None,
-    limit: Optional[int] = 5,
-    current_user: dict = Depends(get_current_user)
+    limit: Optional[int] = 10,
+    language: Optional[str] = "en"
 ):
     """
     Get trending research topics based on search query.
 
     Uses Semantic Scholar and arXiv APIs to find relevant topics.
+    Supports translation to user's preferred language.
     """
     try:
-        topics = await topics_service.search_topics(
-            query=query,
-            discipline=discipline,
-            limit=limit
+        # Translate discipline to English if needed
+        if language != "en" and discipline:
+            discipline = await translation_service.translate_query(discipline, target_language="en", source_language=language)
+
+        # Use Semantic Scholar citation velocity for trending topics
+        papers = await semantic_scholar_service.get_trending_topics(
+            field=discipline,
+            limit=limit or 10,
+            days_back=90
         )
 
-        # Format response
+        # Format response - convert papers to topics
         topic_responses = [
             TopicResponse(
-                id=topic["id"],
-                title=topic["title"],
-                description=topic["description"],
-                impact_score=topic["impact_score"],
-                source=topic["source"],
-                url=topic.get("url"),
-                citation_count=topic.get("citation_count"),
-                year=topic.get("year")
+                id=paper.get("paperId", str(i)),
+                title=paper.get("title", ""),
+                description=paper.get("abstract", "")[:200] if paper.get("abstract") else "",
+                impact_score=paper.get("impact_score", 0.0),
+                source="Semantic Scholar",
+                url=paper.get("url"),
+                citation_count=paper.get("citationCount"),
+                year=paper.get("year")
             )
-            for topic in topics
+            for i, paper in enumerate(papers)
         ]
+
+        # Translate results if needed
+        if language != "en":
+            topics_dict = [topic.model_dump() for topic in topic_responses]
+            translated_topics = await translation_service.translate_results(
+                topics_dict,
+                target_language=language,
+                fields=["title", "description"]
+            )
+            topic_responses = [TopicResponse(**topic) for topic in translated_topics]
 
         return TopicListResponse(
             topics=topic_responses,
@@ -62,7 +80,7 @@ async def get_trending_topics(
 async def get_personalized_topics(
     interests: list[str],
     research_area: Optional[str] = None,
-    current_user: dict = Depends(get_current_user)
+    current_user: Optional[dict] = Depends(get_current_user_optional)
 ):
     """
     Get personalized topic recommendations based on user interests.
@@ -118,7 +136,7 @@ async def get_personalized_topics(
 @router.post("/evolution")
 async def get_topic_evolution(
     request: TopicEvolutionRequest,
-    current_user: dict = Depends(get_current_user)
+    current_user: Optional[dict] = Depends(get_current_user_optional)
 ):
     """
     Get topic evolution over time.

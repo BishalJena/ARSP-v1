@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { DashboardLayout } from '@/components/dashboard-layout';
+import { useLingo } from '@/lib/useLingo';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,14 +13,18 @@ import { apiClient } from '@/lib/api-client';
 import { TrendingUp, Search, Loader2 } from 'lucide-react';
 
 interface Topic {
-  topic_name: string;
-  relevance_score: number;
-  citation_velocity: number;
-  emerging_trend: boolean;
-  related_keywords: string[];
+  id: string;
+  title: string;
+  description: string;
+  impact_score: number;
+  source: string;
+  url?: string;
+  citation_count?: number | null;
+  year?: number;
 }
 
 export default function TopicsPage() {
+  const { locale, t } = useLingo();
   const [discipline, setDiscipline] = useState('');
   const [limit, setLimit] = useState('10');
   const [topics, setTopics] = useState<Topic[]>([]);
@@ -32,7 +37,10 @@ export default function TopicsPage() {
     setLoading(true);
 
     try {
-      const params: any = { limit: parseInt(limit) };
+      const params: any = {
+        limit: parseInt(limit),
+        language: locale  // Pass current language to backend
+      };
       if (discipline.trim()) {
         params.discipline = discipline.trim();
       }
@@ -40,7 +48,7 @@ export default function TopicsPage() {
       const response: any = await apiClient.getTrendingTopics(params);
       setTopics(response.topics || []);
     } catch (err: any) {
-      setError(err.message || 'Failed to fetch trending topics');
+      setError(err.message || t('errors.generic'));
     } finally {
       setLoading(false);
     }
@@ -50,9 +58,9 @@ export default function TopicsPage() {
     <DashboardLayout>
       <div className="space-y-6">
         <div>
-          <h2 className="text-3xl font-bold text-gray-900">Topic Discovery</h2>
+          <h2 className="text-3xl font-bold text-gray-900">{t('topics.title')}</h2>
           <p className="text-gray-600 mt-2">
-            Discover trending research topics and emerging areas in your field
+            {t('topics.description')}
           </p>
         </div>
 
@@ -61,21 +69,21 @@ export default function TopicsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Search className="h-5 w-5" />
-              Find Trending Topics
+              {t('topics.button_search')}
             </CardTitle>
             <CardDescription>
-              Search for trending topics by discipline or browse all areas
+              {t('topics.description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleFetchTopics} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="discipline">Discipline (Optional)</Label>
+                  <Label htmlFor="discipline">{t('topics.search_label')}</Label>
                   <Input
                     id="discipline"
                     type="text"
-                    placeholder="e.g., Computer Science, Biology"
+                    placeholder={t('topics.search_placeholder')}
                     value={discipline}
                     onChange={(e) => setDiscipline(e.target.value)}
                     disabled={loading}
@@ -83,7 +91,7 @@ export default function TopicsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="limit">Number of Topics</Label>
+                  <Label htmlFor="limit">{t('topics.limit_label')}</Label>
                   <Input
                     id="limit"
                     type="number"
@@ -100,12 +108,12 @@ export default function TopicsPage() {
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Fetching Topics...
+                    {t('topics.searching')}
                   </>
                 ) : (
                   <>
                     <TrendingUp className="mr-2 h-4 w-4" />
-                    Get Trending Topics
+                    {t('topics.button_search')}
                   </>
                 )}
               </Button>
@@ -124,7 +132,7 @@ export default function TopicsPage() {
         {topics.length > 0 && (
           <div className="space-y-4">
             <h3 className="text-xl font-semibold text-gray-900">
-              Found {topics.length} Trending Topics
+              {t('topics.found').replace('{count}', topics.length.toString())}
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -132,41 +140,49 @@ export default function TopicsPage() {
                 <Card key={index} className="hover:shadow-md transition-shadow">
                   <CardHeader>
                     <div className="flex items-start justify-between">
-                      <CardTitle className="text-lg">{topic.topic_name}</CardTitle>
-                      {topic.emerging_trend && (
-                        <Badge variant="default" className="bg-green-600">
-                          Emerging
-                        </Badge>
-                      )}
+                      <CardTitle className="text-lg">{topic.title}</CardTitle>
+                      <Badge variant="secondary" className="text-xs">
+                        {topic.source}
+                      </Badge>
                     </div>
+                    {topic.description && (
+                      <p className="text-sm text-muted-foreground mt-2">{topic.description}</p>
+                    )}
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Relevance Score</span>
+                      <span className="text-muted-foreground">{t('topics.impact_score')}</span>
                       <span className="font-semibold">
-                        {(topic.relevance_score * 100).toFixed(1)}%
+                        {topic.impact_score.toFixed(1)}/100
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Citation Velocity</span>
-                      <span className="font-semibold flex items-center gap-1">
-                        <TrendingUp className="h-4 w-4 text-blue-600" />
-                        {topic.citation_velocity.toFixed(2)}
-                      </span>
-                    </div>
-
-                    {topic.related_keywords && topic.related_keywords.length > 0 && (
-                      <div className="space-y-2">
-                        <span className="text-sm text-muted-foreground">Keywords</span>
-                        <div className="flex flex-wrap gap-1">
-                          {topic.related_keywords.map((keyword, idx) => (
-                            <Badge key={idx} variant="outline" className="text-xs">
-                              {keyword}
-                            </Badge>
-                          ))}
-                        </div>
+                    {topic.citation_count !== undefined && topic.citation_count !== null && (
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">{t('topics.citations')}</span>
+                        <span className="font-semibold flex items-center gap-1">
+                          <TrendingUp className="h-4 w-4 text-blue-600" />
+                          {topic.citation_count}
+                        </span>
                       </div>
+                    )}
+
+                    {topic.year && (
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">{t('topics.year')}</span>
+                        <span className="font-semibold">{topic.year}</span>
+                      </div>
+                    )}
+
+                    {topic.url && (
+                      <a
+                        href={topic.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-blue-600 hover:underline flex items-center gap-1"
+                      >
+                        {t('topics.view_paper')} →
+                      </a>
                     )}
                   </CardContent>
                 </Card>
@@ -181,10 +197,10 @@ export default function TopicsPage() {
             <CardContent>
               <TrendingUp className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                No Topics Yet
+                {t('topics.no_results')}
               </h3>
               <p className="text-gray-600 mb-4">
-                Click the button above to discover trending research topics
+                {t('topics.empty_message')}
               </p>
             </CardContent>
           </Card>

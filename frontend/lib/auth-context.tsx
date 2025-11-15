@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useUser, useAuth as useClerkAuth } from '@clerk/nextjs';
+import { useUser, useAuth as useClerkAuth, useSignUp, useSignIn } from '@clerk/nextjs';
 
 interface User {
   id: string;
@@ -12,10 +12,18 @@ interface User {
   research_interests?: string[];
 }
 
+interface RegisterData {
+  email: string;
+  password: string;
+  full_name: string;
+}
+
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   logout: () => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
+  register: (data: RegisterData) => Promise<void>;
   isAuthenticated: boolean;
 }
 
@@ -24,6 +32,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { user: clerkUser, isLoaded } = useUser();
   const { signOut } = useClerkAuth();
+  const { signUp, setActive: setActiveSignUp } = useSignUp();
+  const { signIn, setActive: setActiveSignIn } = useSignIn();
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
@@ -42,6 +52,65 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [clerkUser, isLoaded]);
 
+  const login = async (email: string, password: string) => {
+    if (!signIn) {
+      throw new Error('Sign in is not available');
+    }
+
+    try {
+      const result = await signIn.create({
+        identifier: email,
+        password,
+      });
+
+      if (result.status === 'complete') {
+        await setActiveSignIn({ session: result.createdSessionId });
+      } else {
+        throw new Error('Sign in incomplete. Please try again.');
+      }
+    } catch (error: any) {
+      console.error('Login error:', error);
+      throw new Error(error.errors?.[0]?.message || error.message || 'Login failed');
+    }
+  };
+
+  const register = async (data: RegisterData) => {
+    if (!signUp) {
+      throw new Error('Sign up is not available');
+    }
+
+    try {
+      // Split full name into first and last name
+      const nameParts = data.full_name.trim().split(' ');
+      const firstName = nameParts[0];
+      const lastName = nameParts.slice(1).join(' ') || '';
+
+      // Create the sign-up
+      const result = await signUp.create({
+        emailAddress: data.email,
+        password: data.password,
+        firstName,
+        lastName,
+      });
+
+      // If email verification is not required, set the session active
+      if (result.status === 'complete') {
+        await setActiveSignUp({ session: result.createdSessionId });
+      } else if (result.status === 'missing_requirements') {
+        // Email verification required - prepare email verification
+        await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
+        // Return success - the UI should handle showing verification input
+        return;
+      } else {
+        // Handle email verification if required
+        throw new Error('Registration initiated. Please check your email for verification code.');
+      }
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      throw new Error(error.errors?.[0]?.message || error.message || 'Registration failed');
+    }
+  };
+
   const logout = async () => {
     await signOut();
     setUser(null);
@@ -53,6 +122,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user,
         loading: !isLoaded,
         logout,
+        login,
+        register,
         isAuthenticated: !!user,
       }}
     >

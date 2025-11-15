@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { apiClient } from '@/lib/api-client';
+import { useAuthenticatedAPI } from '@/lib/api-client-auth';
+import { useLingo } from '@/lib/useLingo';
 import { FileText, Upload, Loader2, Trash2, Eye } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
@@ -23,6 +24,8 @@ interface Paper {
 }
 
 export default function PapersPage() {
+  const apiClient = useAuthenticatedAPI();
+  const { locale, t } = useLingo();
   const [papers, setPapers] = useState<Paper[]>([]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -37,10 +40,10 @@ export default function PapersPage() {
   const fetchPapers = async () => {
     setLoading(true);
     try {
-      const response: any = await apiClient.listPapers();
+      const response: any = await apiClient.listPapers({ language: locale });
       setPapers(response.papers || []);
     } catch (err: any) {
-      setError(err.message || 'Failed to load papers');
+      setError(err.message || t('errors.generic'));
     } finally {
       setLoading(false);
     }
@@ -54,7 +57,7 @@ export default function PapersPage() {
 
   const handleUpload = async () => {
     if (!selectedFile) {
-      setError('Please select a file to upload');
+      setError(t('errors.upload_failed') + ': No file selected');
       return;
     }
 
@@ -62,7 +65,7 @@ export default function PapersPage() {
     setError('');
 
     try {
-      await apiClient.uploadPaper(selectedFile);
+      await apiClient.uploadPaper(selectedFile, { language: locale });
       setSelectedFile(null);
       // Reset file input
       const fileInput = document.getElementById('file-upload') as HTMLInputElement;
@@ -70,7 +73,7 @@ export default function PapersPage() {
 
       await fetchPapers();
     } catch (err: any) {
-      setError(err.message || 'Failed to upload paper');
+      setError(err.message || t('errors.upload_failed'));
     } finally {
       setUploading(false);
     }
@@ -81,10 +84,10 @@ export default function PapersPage() {
     setError('');
 
     try {
-      await apiClient.processPaper(paperId);
+      await apiClient.processPaper(paperId, { language: locale });
       await fetchPapers();
     } catch (err: any) {
-      setError(err.message || 'Failed to process paper');
+      setError(err.message || t('errors.process_failed'));
     } finally {
       setProcessingIds(prev => {
         const newSet = new Set(prev);
@@ -95,15 +98,15 @@ export default function PapersPage() {
   };
 
   const handleDelete = async (paperId: number) => {
-    if (!confirm('Are you sure you want to delete this paper?')) {
+    if (!confirm(t('common.delete') + '?')) {
       return;
     }
 
     try {
-      await apiClient.deletePaper(paperId);
+      await apiClient.deletePaper(paperId, { language: locale });
       await fetchPapers();
     } catch (err: any) {
-      setError(err.message || 'Failed to delete paper');
+      setError(err.message || t('errors.generic'));
     }
   };
 
@@ -111,9 +114,9 @@ export default function PapersPage() {
     <DashboardLayout>
       <div className="space-y-6">
         <div>
-          <h2 className="text-3xl font-bold text-gray-900">Paper Analysis</h2>
+          <h2 className="text-3xl font-bold text-gray-900">{t('papers.title')}</h2>
           <p className="text-gray-600 mt-2">
-            Upload and analyze research papers with AI-powered insights
+            {t('papers.description')}
           </p>
         </div>
 
@@ -122,10 +125,10 @@ export default function PapersPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Upload className="h-5 w-5" />
-              Upload Research Paper
+              {t('papers.upload_title')}
             </CardTitle>
             <CardDescription>
-              Upload PDF files for AI-powered analysis and insights
+              {t('papers.upload_description')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -143,19 +146,19 @@ export default function PapersPage() {
                 {uploading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Uploading...
+                    {t('papers.uploading')}
                   </>
                 ) : (
                   <>
                     <Upload className="mr-2 h-4 w-4" />
-                    Upload
+                    {t('papers.upload_button')}
                   </>
                 )}
               </Button>
             </div>
             {selectedFile && (
               <p className="text-sm text-muted-foreground">
-                Selected: {selectedFile.name}
+                {t('papers.selected_file').replace('{filename}', selectedFile.name)}
               </p>
             )}
           </CardContent>
@@ -176,7 +179,7 @@ export default function PapersPage() {
         ) : papers.length > 0 ? (
           <div className="space-y-4">
             <h3 className="text-xl font-semibold text-gray-900">
-              Your Papers ({papers.length})
+              {t('papers.your_papers').replace('{count}', papers.length.toString())}
             </h3>
 
             <div className="space-y-4">
@@ -187,16 +190,16 @@ export default function PapersPage() {
                       <div className="flex-1">
                         <CardTitle className="text-lg">{paper.title}</CardTitle>
                         <CardDescription className="mt-1">
-                          {paper.filename} • Uploaded {new Date(paper.uploaded_at).toLocaleDateString()}
+                          {paper.filename} • {t('papers.uploaded').replace('{date}', new Date(paper.uploaded_at).toLocaleDateString())}
                         </CardDescription>
                       </div>
                       <div className="flex items-center gap-2">
                         {paper.processed ? (
                           <Badge variant="default" className="bg-green-600">
-                            Processed
+                            {t('papers.status_processed')}
                           </Badge>
                         ) : (
-                          <Badge variant="outline">Pending</Badge>
+                          <Badge variant="outline">{t('papers.status_pending')}</Badge>
                         )}
                       </div>
                     </div>
@@ -204,21 +207,21 @@ export default function PapersPage() {
                   <CardContent className="space-y-4">
                     {paper.processed && paper.summary && (
                       <div className="space-y-2">
-                        <h4 className="font-semibold text-sm">Summary</h4>
+                        <h4 className="font-semibold text-sm">{t('papers.summary')}</h4>
                         <p className="text-sm text-gray-700">{paper.summary}</p>
                       </div>
                     )}
 
                     {paper.processed && paper.methodology && (
                       <div className="space-y-2">
-                        <h4 className="font-semibold text-sm">Methodology</h4>
+                        <h4 className="font-semibold text-sm">{t('papers.methodology')}</h4>
                         <p className="text-sm text-gray-700">{paper.methodology}</p>
                       </div>
                     )}
 
                     {paper.processed && paper.key_findings && paper.key_findings.length > 0 && (
                       <div className="space-y-2">
-                        <h4 className="font-semibold text-sm">Key Findings</h4>
+                        <h4 className="font-semibold text-sm">{t('papers.key_findings')}</h4>
                         <ul className="list-disc list-inside space-y-1">
                           {paper.key_findings.map((finding, idx) => (
                             <li key={idx} className="text-sm text-gray-700">
@@ -239,12 +242,12 @@ export default function PapersPage() {
                           {processingIds.has(paper.id) ? (
                             <>
                               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              Processing...
+                              {t('papers.processing')}
                             </>
                           ) : (
                             <>
                               <Eye className="mr-2 h-4 w-4" />
-                              Process Paper
+                              {t('papers.process_button')}
                             </>
                           )}
                         </Button>
@@ -255,7 +258,7 @@ export default function PapersPage() {
                         onClick={() => handleDelete(paper.id)}
                       >
                         <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
+                        {t('common.delete')}
                       </Button>
                     </div>
                   </CardContent>
@@ -268,10 +271,10 @@ export default function PapersPage() {
             <CardContent>
               <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                No Papers Yet
+                {t('papers.no_papers')}
               </h3>
               <p className="text-gray-600 mb-4">
-                Upload your first research paper to get started
+                {t('papers.empty_message')}
               </p>
             </CardContent>
           </Card>

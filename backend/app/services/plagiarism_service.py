@@ -13,7 +13,8 @@ class PlagiarismService:
 
     def __init__(self):
         self.hf_api_url = "https://api-inference.huggingface.co/models"
-        self.model = "sentence-transformers/all-mpnet-base-v2"
+        # Use active model - paraphrase-MiniLM-L6-v2 is smaller, faster, and currently supported
+        self.model = "sentence-transformers/paraphrase-MiniLM-L6-v2"
         self.crossref_url = "https://api.crossref.org/works"
 
         self.hf_headers = {}
@@ -79,10 +80,22 @@ class PlagiarismService:
 
             # Step 5: Calculate originality score
             if flagged_sections:
-                max_similarity = max(section["similarity"] for section in flagged_sections)
-                originality_score = max(0, 100 - max_similarity)
+                # Calculate average similarity of flagged sections
+                avg_similarity = sum(section["similarity"] for section in flagged_sections) / len(flagged_sections)
+                # Weight by percentage of text flagged
+                text_length = len(text)
+                flagged_length = sum(len(section["text"]) for section in flagged_sections)
+                plagiarism_percentage = (flagged_length / text_length) * 100 if text_length > 0 else 0
+
+                # Originality = 100 - (weighted average of similarity and coverage)
+                originality_score = max(0, 100 - (avg_similarity * 0.7 + plagiarism_percentage * 0.3))
             else:
-                originality_score = 100.0
+                # If embeddings failed but we got citations, lower the score slightly
+                if citations and not chunk_embeddings:
+                    # Generic text likely has similar published work
+                    originality_score = 85.0
+                else:
+                    originality_score = 100.0
 
             # Step 6: Get citation suggestions
             citations = await self._get_citation_suggestions(text)

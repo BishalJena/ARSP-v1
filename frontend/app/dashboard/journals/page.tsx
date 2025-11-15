@@ -9,7 +9,8 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { apiClient } from '@/lib/api-client';
+import { useAuthenticatedAPI } from '@/lib/api-client-auth';
+import { useLingo } from '@/lib/useLingo';
 import { BookOpen, Loader2, Star, TrendingUp, Clock } from 'lucide-react';
 
 interface Journal {
@@ -24,6 +25,8 @@ interface Journal {
 }
 
 export default function JournalsPage() {
+  const apiClient = useAuthenticatedAPI();
+  const { locale, t } = useLingo();
   const [abstract, setAbstract] = useState('');
   const [keywords, setKeywords] = useState('');
   const [journals, setJournals] = useState<Journal[]>([]);
@@ -34,12 +37,12 @@ export default function JournalsPage() {
     e.preventDefault();
 
     if (!abstract.trim()) {
-      setError('Please enter an abstract');
+      setError(t('journals.abstract_label') + ' is required');
       return;
     }
 
     if (!keywords.trim()) {
-      setError('Please enter keywords');
+      setError(t('journals.keywords_label') + ' is required');
       return;
     }
 
@@ -53,11 +56,12 @@ export default function JournalsPage() {
       const response: any = await apiClient.recommendJournals({
         abstract: abstract.trim(),
         keywords: keywordArray,
+        language: locale,
       });
 
       setJournals(response.recommendations || []);
     } catch (err: any) {
-      setError(err.message || 'Failed to get journal recommendations');
+      setError(err.message || t('errors.recommend_failed'));
     } finally {
       setLoading(false);
     }
@@ -73,9 +77,9 @@ export default function JournalsPage() {
     <DashboardLayout>
       <div className="space-y-6">
         <div>
-          <h2 className="text-3xl font-bold text-gray-900">Journal Finder</h2>
+          <h2 className="text-3xl font-bold text-gray-900">{t('journals.title')}</h2>
           <p className="text-gray-600 mt-2">
-            Get personalized journal recommendations based on your research
+            {t('journals.description')}
           </p>
         </div>
 
@@ -84,19 +88,19 @@ export default function JournalsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BookOpen className="h-5 w-5" />
-              Find Suitable Journals
+              {t('journals.form_title')}
             </CardTitle>
             <CardDescription>
-              Enter your research abstract and keywords to get journal recommendations
+              {t('journals.form_description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleRecommend} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="abstract">Research Abstract</Label>
+                <Label htmlFor="abstract">{t('journals.abstract_label')}</Label>
                 <Textarea
                   id="abstract"
-                  placeholder="Enter your research abstract..."
+                  placeholder={t('journals.abstract_placeholder')}
                   value={abstract}
                   onChange={(e) => setAbstract(e.target.value)}
                   disabled={loading}
@@ -106,31 +110,28 @@ export default function JournalsPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="keywords">Keywords</Label>
+                <Label htmlFor="keywords">{t('journals.keywords_label')}</Label>
                 <Input
                   id="keywords"
                   type="text"
-                  placeholder="machine learning, AI, neural networks (comma-separated)"
+                  placeholder={t('journals.keywords_placeholder')}
                   value={keywords}
                   onChange={(e) => setKeywords(e.target.value)}
                   disabled={loading}
                   required
                 />
-                <p className="text-sm text-muted-foreground">
-                  Separate keywords with commas
-                </p>
               </div>
 
               <Button type="submit" disabled={loading}>
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Finding Journals...
+                    {t('journals.recommending')}
                   </>
                 ) : (
                   <>
                     <BookOpen className="mr-2 h-4 w-4" />
-                    Get Recommendations
+                    {t('journals.button_recommend')}
                   </>
                 )}
               </Button>
@@ -149,7 +150,7 @@ export default function JournalsPage() {
         {journals.length > 0 && (
           <div className="space-y-4">
             <h3 className="text-xl font-semibold text-gray-900">
-              Recommended Journals ({journals.length})
+              {t('journals.found').replace('{count}', journals.length.toString())}
             </h3>
 
             <div className="space-y-4">
@@ -166,14 +167,14 @@ export default function JournalsPage() {
                       <div className="flex flex-col items-end gap-2">
                         {journal.open_access && (
                           <Badge variant="default" className="bg-blue-600">
-                            Open Access
+                            {t('journals.open_access')}
                           </Badge>
                         )}
                         <Badge
                           variant="outline"
                           className={`font-semibold ${getMatchColor(journal.match_score)}`}
                         >
-                          {(journal.match_score * 100).toFixed(0)}% Match
+                          {(journal.match_score * 100).toFixed(0)}% {t('journals.match_score')}
                         </Badge>
                       </div>
                     </div>
@@ -183,7 +184,7 @@ export default function JournalsPage() {
                       <div className="space-y-1">
                         <div className="flex items-center gap-2 text-muted-foreground">
                           <Star className="h-4 w-4" />
-                          <span className="text-sm">Impact Factor</span>
+                          <span className="text-sm">{t('journals.impact_factor')}</span>
                         </div>
                         <p className="text-2xl font-bold text-gray-900">
                           {journal.impact_factor.toFixed(2)}
@@ -193,7 +194,7 @@ export default function JournalsPage() {
                       <div className="space-y-1">
                         <div className="flex items-center gap-2 text-muted-foreground">
                           <TrendingUp className="h-4 w-4" />
-                          <span className="text-sm">Acceptance Rate</span>
+                          <span className="text-sm">{t('journals.acceptance_rate')}</span>
                         </div>
                         <p className="text-2xl font-bold text-gray-900">
                           {(journal.acceptance_rate * 100).toFixed(0)}%
@@ -203,7 +204,7 @@ export default function JournalsPage() {
                       <div className="space-y-1">
                         <div className="flex items-center gap-2 text-muted-foreground">
                           <Clock className="h-4 w-4" />
-                          <span className="text-sm">Time to Publish</span>
+                          <span className="text-sm">{t('journals.time_to_publish')}</span>
                         </div>
                         <p className="text-2xl font-bold text-gray-900">
                           {journal.avg_time_to_publish} days
@@ -223,10 +224,10 @@ export default function JournalsPage() {
             <CardContent>
               <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                No Recommendations Yet
+                {t('journals.no_results')}
               </h3>
               <p className="text-gray-600 mb-4">
-                Enter your research details above to get journal recommendations
+                {t('journals.empty_message')}
               </p>
             </CardContent>
           </Card>

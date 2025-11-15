@@ -1,6 +1,6 @@
 """Papers and literature review endpoints."""
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, status
-from typing import List
+from typing import List, Optional
 from datetime import datetime
 from ...schemas.papers import (
     PaperUploadResponse,
@@ -8,7 +8,8 @@ from ...schemas.papers import (
     RelatedPaperResponse
 )
 from ...services.papers_service import papers_service
-from ...core.auth import get_current_user
+from ...services.translation_service import translation_service
+from ...core.auth import get_current_user_optional
 from ...core.supabase import supabase
 
 router = APIRouter()
@@ -17,7 +18,7 @@ router = APIRouter()
 @router.post("/upload", response_model=PaperUploadResponse)
 async def upload_paper(
     file: UploadFile = File(...),
-    current_user: dict = Depends(get_current_user)
+    current_user: Optional[dict] = Depends(get_current_user_optional)
 ):
     """
     Upload a research paper (PDF).
@@ -42,7 +43,8 @@ async def upload_paper(
         )
 
     try:
-        user_id = current_user["user_id"]
+        # Use demo user if not authenticated
+        user_id = current_user["user_id"] if current_user else "demo_user"
 
         # Generate file path: user_id/filename
         file_path = f"{user_id}/{file.filename}"
@@ -91,15 +93,17 @@ async def upload_paper(
 @router.post("/{paper_id}/process", response_model=LiteratureReviewResponse)
 async def process_paper(
     paper_id: str,
-    current_user: dict = Depends(get_current_user)
+    language: Optional[str] = "en",
+    current_user: Optional[dict] = Depends(get_current_user_optional)
 ):
     """
     Process a paper to generate literature review.
 
     Extracts text, generates summary, identifies insights, and extracts references.
+    Supports translation to user's preferred language.
     """
     try:
-        user_id = current_user["user_id"]
+        user_id = current_user["user_id"] if current_user else "demo_user"
 
         # Get paper details from database
         result = supabase.table("uploads").select("*").eq("id", paper_id).eq("user_id", user_id).single().execute()
@@ -115,12 +119,54 @@ async def process_paper(
         # Download file from storage
         file_content = supabase.storage.from_("papers").download(paper["file_path"])
 
-        # Process the paper
+        # Process the paper (always in English)
         review = await papers_service.process_paper(
             paper_id=paper_id,
             user_id=user_id,
             pdf_content=file_content
         )
+
+        # Translate results if needed
+        if language and language != "en":
+            # Translate title, summary, and insights
+            texts_to_translate = []
+            if review.get("title"):
+                texts_to_translate.append(review["title"])
+            texts_to_translate.append(review["summary"])
+            texts_to_translate.extend(review.get("insights", []))
+
+            if texts_to_translate:
+                translated_texts = await translation_service.translate_batch(
+                    texts_to_translate,
+                    target_language=language,
+                    source_language="en"
+                )
+
+                # Update review with translated texts
+                idx = 0
+                if review.get("title"):
+                    review["title"] = translated_texts[idx]
+                    idx += 1
+                review["summary"] = translated_texts[idx]
+                idx += 1
+                if review.get("insights"):
+                    review["insights"] = translated_texts[idx:]
+
+            # Translate reference titles
+            if review.get("references"):
+                ref_titles = [ref["title"] for ref in review["references"]]
+                if ref_titles:
+                    translated_titles = await translation_service.translate_batch(
+                        ref_titles,
+                        target_language=language,
+                        source_language="en"
+                    )
+                    for i, ref in enumerate(review["references"]):
+                        if i < len(translated_titles):
+                            ref["title"] = translated_titles[i]
+
+            # Update language field
+            review["language"] = language
 
         return LiteratureReviewResponse(**review)
 
@@ -136,10 +182,10 @@ async def process_paper(
 @router.get("/{paper_id}")
 async def get_paper(
     paper_id: str,
-    current_user: dict = Depends(get_current_user)
+    current_user: Optional[dict] = Depends(get_current_user_optional)
 ):
     """Get paper details."""
-    user_id = current_user["user_id"]
+    user_id = current_user["user_id"] if current_user else "demo_user"
 
     result = supabase.table("uploads").select("*").eq("id", paper_id).eq("user_id", user_id).single().execute()
 
@@ -154,10 +200,10 @@ async def get_paper(
 
 @router.get("/")
 async def list_papers(
-    current_user: dict = Depends(get_current_user)
+    current_user: Optional[dict] = Depends(get_current_user_optional)
 ):
     """List all papers for the current user."""
-    user_id = current_user["user_id"]
+    user_id = current_user["user_id"] if current_user else "demo_user"
 
     result = supabase.table("uploads").select("*").eq("user_id", user_id).order("created_at", desc=True).execute()
 
@@ -168,11 +214,32 @@ async def list_papers(
 async def get_related_papers(
     paper_id: str,
     limit: int = 10,
-    current_user: dict = Depends(get_current_user)
+    language: Optional[str] = "en",
+    current_user: Optional[dict] = Depends(get_current_user_optional)
 ):
-    """Get related papers using Semantic Scholar."""
+    """
+    Get related papers using Semantic Scholar.
+
+    Supports translation to user's preferred language.
+    """
     try:
         related = await papers_service.get_related_papers(paper_id, limit)
+
+        # Translate results if needed
+        if language and language != "en" and related:
+            # Convert to dict for translation
+            papers_dict = [paper.dict() if hasattr(paper, 'dict') else paper for paper in related]
+
+            # Translate titles and abstracts
+            translated_papers = await translation_service.translate_results(
+                papers_dict,
+                target_language=language,
+                fields=["title", "abstract"]
+            )
+
+            # Convert back to RelatedPaperResponse objects
+            related = [RelatedPaperResponse(**paper) for paper in translated_papers]
+
         return related
 
     except Exception as e:
@@ -185,10 +252,10 @@ async def get_related_papers(
 @router.delete("/{paper_id}")
 async def delete_paper(
     paper_id: str,
-    current_user: dict = Depends(get_current_user)
+    current_user: Optional[dict] = Depends(get_current_user_optional)
 ):
     """Delete a paper."""
-    user_id = current_user["user_id"]
+    user_id = current_user["user_id"] if current_user else "demo_user"
 
     # Get paper details
     result = supabase.table("uploads").select("*").eq("id", paper_id).eq("user_id", user_id).single().execute()
