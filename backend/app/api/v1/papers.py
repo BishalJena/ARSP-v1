@@ -46,26 +46,20 @@ async def upload_paper(
         # Use demo user if not authenticated
         user_id = current_user["user_id"] if current_user else "demo_user"
 
-        # Generate file path: user_id/filename
-        file_path = f"{user_id}/{file.filename}"
+        # Process the PDF immediately instead of storing
+        analysis = await papers_service.process_paper_content(content, file.filename)
 
-        # Upload to Supabase Storage
-        result = supabase.storage.from_("papers").upload(
-            file_path,
-            content,
-            {"content-type": "application/pdf"}
-        )
-
-        # Get public URL (or signed URL for private buckets)
-        file_url = supabase.storage.from_("papers").get_public_url(file_path)
-
-        # Create database record
+        # Create database record with analysis
         upload_data = {
             "user_id": user_id,
             "file_name": file.filename,
-            "file_path": file_path,
+            "file_path": f"processed/{file.filename}",  # Virtual path
             "file_size": file_size,
-            "mime_type": "application/pdf"
+            "mime_type": "application/pdf",
+            "processed": True,
+            "summary": analysis.get("summary", ""),
+            "methodology": analysis.get("methodology", ""),
+            "key_findings": analysis.get("insights", [])
         }
 
         db_result = supabase.table("uploads").insert(upload_data).execute()
@@ -79,11 +73,14 @@ async def upload_paper(
             id=upload_record["id"],
             file_name=file.filename,
             file_size=file_size,
-            upload_url=file_url,
+            upload_url=f"/api/v1/papers/{upload_record['id']}",
             created_at=upload_record["created_at"]
         )
 
     except Exception as e:
+        import traceback
+        print(f"Upload error: {str(e)}")
+        print(f"Traceback: {traceback.format_exc()}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to upload paper: {str(e)}"
@@ -182,9 +179,10 @@ async def process_paper(
 @router.get("/{paper_id}")
 async def get_paper(
     paper_id: str,
+    language: Optional[str] = "en",
     current_user: Optional[dict] = Depends(get_current_user_optional)
 ):
-    """Get paper details."""
+    """Get paper details with optional translation."""
     user_id = current_user["user_id"] if current_user else "demo_user"
 
     result = supabase.table("uploads").select("*").eq("id", paper_id).eq("user_id", user_id).single().execute()
@@ -195,19 +193,100 @@ async def get_paper(
             detail="Paper not found"
         )
 
-    return result.data
+    paper = result.data
+
+    # Translate if needed
+    if language and language != "en" and paper.get("processed"):
+        texts_to_translate = []
+
+        # Add paper title
+        if paper.get("paper_title"):
+            texts_to_translate.append(paper["paper_title"])
+
+        if paper.get("summary"):
+            texts_to_translate.append(paper["summary"])
+        if paper.get("methodology"):
+            texts_to_translate.append(paper["methodology"])
+
+        # Add insights
+        if paper.get("key_findings"):
+            texts_to_translate.extend(paper["key_findings"])
+
+        if texts_to_translate:
+            translated = await translation_service.translate_batch(
+                texts_to_translate,
+                target_language=language,
+                source_language="en"
+            )
+
+            idx = 0
+            if paper.get("paper_title"):
+                paper["paper_title"] = translated[idx]
+                idx += 1
+            if paper.get("summary"):
+                paper["summary"] = translated[idx]
+                idx += 1
+            if paper.get("methodology"):
+                paper["methodology"] = translated[idx]
+                idx += 1
+            if paper.get("key_findings"):
+                paper["key_findings"] = translated[idx:]
+
+    return paper
 
 
 @router.get("/")
 async def list_papers(
+    language: Optional[str] = "en",
     current_user: Optional[dict] = Depends(get_current_user_optional)
 ):
-    """List all papers for the current user."""
+    """List all papers for the current user with optional translation."""
     user_id = current_user["user_id"] if current_user else "demo_user"
 
     result = supabase.table("uploads").select("*").eq("user_id", user_id).order("created_at", desc=True).execute()
 
-    return {"papers": result.data or [], "count": len(result.data or [])}
+    papers = result.data or []
+
+    # Translate all papers if needed
+    if language and language != "en" and papers:
+        for paper in papers:
+            if paper.get("processed"):
+                texts_to_translate = []
+
+                # Add paper title
+                if paper.get("paper_title"):
+                    texts_to_translate.append(paper["paper_title"])
+
+                if paper.get("summary"):
+                    texts_to_translate.append(paper["summary"])
+                if paper.get("methodology"):
+                    texts_to_translate.append(paper["methodology"])
+
+                # Add insights
+                if paper.get("key_findings"):
+                    texts_to_translate.extend(paper["key_findings"])
+
+                if texts_to_translate:
+                    translated = await translation_service.translate_batch(
+                        texts_to_translate,
+                        target_language=language,
+                        source_language="en"
+                    )
+
+                    idx = 0
+                    if paper.get("paper_title"):
+                        paper["paper_title"] = translated[idx]
+                        idx += 1
+                    if paper.get("summary"):
+                        paper["summary"] = translated[idx]
+                        idx += 1
+                    if paper.get("methodology"):
+                        paper["methodology"] = translated[idx]
+                        idx += 1
+                    if paper.get("key_findings"):
+                        paper["key_findings"] = translated[idx:]
+
+    return {"papers": papers, "count": len(papers)}
 
 
 @router.get("/{paper_id}/related", response_model=List[RelatedPaperResponse])
