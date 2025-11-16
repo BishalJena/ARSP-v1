@@ -87,7 +87,7 @@ class APIClient {
   }
 
   // ============ TOPICS ENDPOINTS ============
-  async getTrendingTopics(params?: { discipline?: string; limit?: number }) {
+  async getTrendingTopics(params?: { discipline?: string; limit?: number; language?: string }) {
     const query = new URLSearchParams(params as any).toString();
     return this.request(`/topics/trending${query ? `?${query}` : ''}`);
   }
@@ -107,7 +107,7 @@ class APIClient {
   }
 
   // ============ PAPERS ENDPOINTS ============
-  async uploadPaper(file: File) {
+  async uploadPaper(file: File, options?: { language?: string }) {
     const formData = new FormData();
     formData.append('file', file);
 
@@ -142,15 +142,16 @@ class APIClient {
     });
   }
 
-  async getPaper(paperId: number, language?: string) {
-    const queryString = language ? `?language=${language}` : '';
+  async getPaper(paperId: number, options?: { language?: string }) {
+    const queryString = options?.language ? `?language=${options.language}` : '';
     return this.request(`/papers-enhanced/${paperId}${queryString}`);
   }
 
-  async listPapers(options?: { limit?: number; offset?: number }) {
+  async listPapers(options?: { limit?: number; offset?: number; language?: string }) {
     const params = new URLSearchParams();
     if (options?.limit) params.append('limit', options.limit.toString());
     if (options?.offset) params.append('offset', options.offset.toString());
+    if (options?.language) params.append('language', options.language);
 
     const queryString = params.toString();
     return this.request(`/papers-enhanced/${queryString ? `?${queryString}` : ''}`);

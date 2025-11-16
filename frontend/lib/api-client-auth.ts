@@ -41,7 +41,7 @@ export function useAuthenticatedAPI() {
     },
 
     // Topics endpoints (no auth required)
-    getTrendingTopics: (params?: { discipline?: string; limit?: number }) =>
+    getTrendingTopics: (params?: { discipline?: string; limit?: number; language?: string }) =>
       apiClient.getTrendingTopics(params),
 
     getPersonalizedTopics: (data: { interests: string[]; research_area?: string }) =>
@@ -52,7 +52,7 @@ export function useAuthenticatedAPI() {
 
     // Papers endpoints (auth required)
     uploadPaper: async (file: File, options?: { language?: string }) => {
-      return await authenticatedClient.makeRequest(() => apiClient.uploadPaper(file));
+      return await authenticatedClient.makeRequest(() => apiClient.uploadPaper(file, options));
     },
 
     processPaper: async (paperId: number, options?: { language?: string; paper_type?: string }) => {
@@ -60,7 +60,7 @@ export function useAuthenticatedAPI() {
     },
 
     getPaper: async (paperId: number, options?: { language?: string }) => {
-      return await authenticatedClient.makeRequest(() => apiClient.getPaper(paperId, options?.language));
+      return await authenticatedClient.makeRequest(() => apiClient.getPaper(paperId, options));
     },
 
     listPapers: async (options?: { language?: string; limit?: number; offset?: number }) => {
@@ -105,6 +105,7 @@ export function useAuthenticatedAPI() {
     recommendJournals: async (data: {
       abstract: string;
       keywords: string[];
+      language?: string;
       preferences?: {
         open_access_only?: boolean;
         min_impact_factor?: number;
