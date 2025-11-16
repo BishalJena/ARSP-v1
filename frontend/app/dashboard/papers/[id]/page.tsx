@@ -481,7 +481,7 @@ export default function PaperDetailPage() {
   const [deleting, setDeleting] = useState(false);
   const [previousLocale, setPreviousLocale] = useState(locale);
 
-  const paperId = params.id as string;
+  const paperId = parseInt(params.id as string);
 
   useEffect(() => {
     fetchPaperAnalysis();
