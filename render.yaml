@@ -18,8 +18,6 @@ services:
         sync: false
       - key: SUPABASE_SERVICE_KEY
         sync: false
-      - key: SUPABASE_DB_PASS
-        sync: false
 
       # JWT Authentication
       - key: JWT_SECRET_KEY
@@ -38,6 +36,8 @@ services:
         sync: false
       - key: LINGO_API_KEY
         sync: false
+      - key: CROSSREF_EMAIL
+        sync: false
 
       # CORS (Update with your Vercel frontend URL)
       - key: CORS_ORIGINS
@@ -51,7 +51,7 @@ services:
       - key: DEBUG
         value: False
 
-    healthCheckPath: /api/v1/health
+    healthCheckPath: /health
 
     # Auto-deploy on push to main branch
     autoDeploy: true
