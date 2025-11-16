@@ -12,9 +12,9 @@
 
 **🌍 Multilingual AI-powered research platform for academic researchers worldwide**
 
-**Built for [WeMakeDevs Multilingual Hackathon](https://hackathon.wemakedevs.org/) 2024**
+**Built for [WeMakeDevs Multilingual Hackathon](https://hackathon.wemakedevs.org/) 2025**
 
-[🚀 Live Demo](https://arsp-v1.vercel.app) • [🎬 Video Demo](https://youtu.be/NDbAA2M6C6o) • [Hackathon Submission](#-hackathon-submission) • [Lingo.dev Integration](#-lingodev-integration-showcase) • [Quick Start](#-quick-start) • [Features](#-features)
+[🚀 Live App](https://arsp-v1.vercel.app) • [🎬 Video Demo](https://youtu.be/NDbAA2M6C6o) • [Hackathon Submission](#-hackathon-submission) • [Lingo.dev Integration](#-lingodev-integration-showcase) • [Quick Start](#-quick-start) • [Features](#-features)
 
 </div>
 
@@ -849,7 +849,7 @@ This isn't a demo project — it's a **production platform** that can serve mill
 
 <div align="center">
 
-### 🌟 Built for WeMakeDevs Multilingual Hackathon 2024
+### 🌟 Built for WeMakeDevs Multilingual Hackathon 2025
 
 **Made with ❤️ for researchers worldwide**
 
