@@ -4,21 +4,6 @@
   "framework": "nextjs",
   "installCommand": "npm install",
   "devCommand": "npm run dev",
-  "env": {
-    "NEXT_PUBLIC_API_URL": {
-      "description": "Backend API URL",
-      "value": "https://your-backend.onrender.com/api/v1"
-    },
-    "NEXT_PUBLIC_SUPABASE_URL": {
-      "description": "Supabase Project URL"
-    },
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY": {
-      "description": "Supabase Anonymous Key"
-    },
-    "NEXT_PUBLIC_LINGO_API_KEY": {
-      "description": "Lingo.dev API Key for translations"
-    }
-  },
   "headers": [
     {
       "source": "/(.*)",
