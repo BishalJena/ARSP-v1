@@ -62,7 +62,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await fetch(`${apiClient.baseURL}/auth/login`, {
+      const response = await fetch(`${apiClient.getBaseURL()}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -92,7 +92,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const register = async (data: RegisterData) => {
     try {
-      const response = await fetch(`${apiClient.baseURL}/auth/register`, {
+      const response = await fetch(`${apiClient.getBaseURL()}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -124,7 +124,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       // Call logout endpoint (optional - just for logging)
       if (token) {
-        await fetch(`${apiClient.baseURL}/auth/logout`, {
+        await fetch(`${apiClient.getBaseURL()}/auth/logout`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,

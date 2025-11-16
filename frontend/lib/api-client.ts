@@ -12,6 +12,10 @@ class APIClient {
     }
   }
 
+  getBaseURL(): string {
+    return this.baseURL;
+  }
+
   setToken(token: string) {
     this.token = token;
     if (typeof window !== 'undefined') {
