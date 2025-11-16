@@ -498,7 +498,7 @@ export default function PaperDetailPage() {
     }
 
     try {
-      const response = await apiClient.getPaper(paperId, { language: locale });
+      const response = await apiClient.getPaper(paperId, { language: locale }) as PaperAnalysis;
       setPaper(response);
       setPreviousLocale(locale);
     } catch (err: any) {
