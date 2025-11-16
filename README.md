@@ -14,7 +14,7 @@
 
 **Built for [WeMakeDevs Multilingual Hackathon](https://hackathon.wemakedevs.org/) 2024**
 
-[Hackathon Submission](#-hackathon-submission) • [Lingo.dev Integration](#-lingodev-integration-showcase) • [Quick Start](#-quick-start) • [Features](#-features) • [Architecture](#-architecture)
+[🚀 Live Demo](https://arsp-v1.vercel.app) • [🎬 Video Demo](https://youtu.be/NDbAA2M6C6o) • [Hackathon Submission](#-hackathon-submission) • [Lingo.dev Integration](#-lingodev-integration-showcase) • [Quick Start](#-quick-start) • [Features](#-features)
 
 </div>
 
@@ -60,7 +60,9 @@
 
 ### 🎬 Live Demo & Features
 
-**🔗 Try ARSP Live**: [Coming Soon - Deployed on Vercel]
+**🔗 Try ARSP Live**: [https://arsp-v1.vercel.app](https://arsp-v1.vercel.app)
+
+**📹 Watch Demo Video**: [https://youtu.be/NDbAA2M6C6o](https://youtu.be/NDbAA2M6C6o)
 
 **Key User Flows**:
 1. **🌐 Language Selection**: User picks from 13 languages via elegant dropdown with flag emojis
