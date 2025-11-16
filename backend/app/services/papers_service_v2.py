@@ -4,6 +4,7 @@ Replaces legacy PyPDF2 + BART approach with faster, better quality analysis.
 """
 
 import io
+import copy
 from typing import Dict, Any, Optional, List
 from datetime import datetime, timezone
 import json
@@ -11,6 +12,7 @@ import json
 from ..core.config import settings
 from ..core.supabase import supabase, supabase_admin
 from .gemini_service_v2 import enhanced_gemini_service
+from .translation_service import translation_service
 
 
 class EnhancedPapersService:
@@ -28,7 +30,7 @@ class EnhancedPapersService:
     def __init__(self):
         self.gemini = enhanced_gemini_service
 
-        # Language mapping for translations
+        # Language mapping for on-demand translations
         self.language_names = {
             "en": "English",
             "hi": "Hindi",
@@ -115,45 +117,70 @@ class EnhancedPapersService:
         target_language: str = "en"
     ) -> Dict[str, Any]:
         """
-        Process paper using Gemini 2.0 Flash Lite.
+        Process paper using Gemini 2.5 Flash Lite - English only, fast!
 
         This is the main analysis function that:
-        1. Analyzes PDF with Gemini (1-3 seconds!)
-        2. Optionally translates to target language
-        3. Stores analysis in database
-        4. Returns structured analysis
+        1. Analyzes PDF with Gemini (30-40 seconds)
+        2. Stores English analysis in database
+        3. Translations happen on-demand when requested
 
         Args:
             paper_id: Database ID of the paper
             pdf_bytes: PDF file bytes
             paper_type: Type of paper (research, ml, clinical, review)
-            target_language: Language code for output
+            target_language: Ignored - always returns English
 
         Returns:
-            Structured paper analysis
+            Structured paper analysis in English
         """
         try:
-            # Analyze with Gemini (fast!)
-            analysis = await self.gemini.analyze_and_translate(
+            # Analyze with Gemini - English only!
+            print(f"📄 Analyzing paper with Gemini 2.5 Flash Lite...")
+            analysis = await self.gemini.analyze_paper(
                 pdf_bytes,
-                target_language=self.language_names.get(target_language, "English"),
                 paper_type=paper_type
             )
+            print(f"✅ Gemini analysis complete!")
 
-            # Store in database (skip new columns if they don't exist yet)
+            # Extract metadata
+            paper_title = analysis.get("title", "")
+            year = analysis.get("year")
+            authors = analysis.get("authors", [])
+            venue = analysis.get("venue", "")
+
+            # Extract content sections
+            abstract = analysis.get("abstract", "")
+            introduction = analysis.get("introduction", "")
+            conclusion = analysis.get("conclusion", "")
+
+            # Extract legacy fields for frontend compatibility
+            summary = analysis.get("tldr", "") or analysis.get("plain_summary", "")
+            methodology = analysis.get("methods", {}).get("overview", "") if isinstance(analysis.get("methods"), dict) else ""
+            key_findings = analysis.get("results", {}).get("key_findings", []) if isinstance(analysis.get("results"), dict) else []
+
+            # Store in database with both new and legacy fields
+            # Translation cache starts empty - will fill on-demand when user requests
             update_data = {
                 "processed": True,
-                # "analysis": analysis,  # Skip if column doesn't exist (pending migration)
-                # "original_language": "en",  # Skip if column doesn't exist
-                # "paper_type": paper_type,  # Skip if column doesn't exist
-                # "processed_at": datetime.now(timezone.utc).isoformat()  # Skip if column doesn't exist
+                "analysis": analysis,  # English analysis only
+                "original_language": "en",
+                "paper_type": paper_type,
+                "processed_at": datetime.now(timezone.utc).isoformat(),
+                "translation_cache": {},  # Empty - filled on-demand when user requests
+                # Metadata
+                "paper_title": paper_title,
+                "year": year,
+                "authors": authors,
+                "venue": venue,
+                # Content sections
+                "abstract": abstract,
+                "introduction": introduction,
+                "conclusion": conclusion,
+                # Legacy fields for frontend compatibility
+                "summary": summary,
+                "methodology": methodology,
+                "key_findings": key_findings
             }
-
-            # Initialize translation cache if not English (skip if column doesn't exist)
-            # if target_language != "en":
-            #     update_data["translation_cache"] = {
-            #         target_language: analysis
-            #     }
 
             supabase_admin.table("uploads").update(update_data).eq("id", paper_id).execute()
 
@@ -161,18 +188,24 @@ class EnhancedPapersService:
                 "success": True,
                 "paper_id": paper_id,
                 "analysis": analysis,
-                "language": target_language,
-                "processing_method": "gemini-2.0-flash-lite",
-                "performance": "1-3 seconds processing time"
+                "language": "en",
+                "processing_method": "gemini-2.5-flash-lite",
+                "performance": "30-40 seconds (50% faster - no pre-translation!)"
             }
 
         except Exception as e:
             # Mark as failed in database
-            supabase_admin.table("uploads").update({
-                "processed": False,
-                "error_message": str(e),
-                "processed_at": datetime.now(timezone.utc).isoformat()
-            }).eq("id", paper_id).execute()
+            try:
+                supabase_admin.table("uploads").update({
+                    "processed": False,
+                    "error_message": str(e),
+                    "processed_at": datetime.now(timezone.utc).isoformat()
+                }).eq("id", paper_id).execute()
+            except:
+                # Fallback if new columns don't exist
+                supabase_admin.table("uploads").update({
+                    "processed": False
+                }).eq("id", paper_id).execute()
 
             raise Exception(f"Paper processing failed: {str(e)}")
 
@@ -214,43 +247,169 @@ class EnhancedPapersService:
 
             analysis = paper.get("analysis")
 
-            # If English or already cached, return immediately
+            # Extract metadata
+            paper_title = paper.get("paper_title")
+            year = paper.get("year")
+            authors = paper.get("authors")
+            venue = paper.get("venue")
+
+            # If English, return original
             if language == "en":
+                print(f"📄 Returning English (original) for paper: {paper_title}")
                 return {
                     "paper_id": paper_id,
+                    "paper_title": paper_title,
+                    "year": year,
+                    "authors": authors,
+                    "venue": venue,
                     "analysis": analysis,
                     "language": "en",
                     "from_cache": True
                 }
 
-            # Check translation cache
+            # Check translation cache (instant switching!)
             cache = paper.get("translation_cache", {})
             if language in cache:
+                print(f"⚡ INSTANT return from cache: {self.language_names.get(language, language)} for paper: {paper_title}")
                 return {
                     "paper_id": paper_id,
+                    "paper_title": paper_title,
+                    "year": year,
+                    "authors": authors,
+                    "venue": venue,
                     "analysis": cache[language],
                     "language": language,
-                    "from_cache": True
+                    "from_cache": True,
+                    "instant": True
                 }
 
-            # Translate on-demand (fast with Gemini!)
-            translated = await self.gemini.translate_analysis(
-                analysis,
-                self.language_names.get(language, language)
+            # Translate on-demand using Google Translate (fastest!)
+            print(f"🌍 Cache miss! Translating to {self.language_names.get(language, language)} using Google Translate...")
+
+            # Prepare texts to translate
+            texts_to_translate = []
+            text_keys = []
+
+            # Simple string fields
+            for key in ["title", "abstract", "tldr", "introduction", "research_question",
+                       "discussion", "conclusion"]:
+                if key in analysis and analysis[key]:
+                    texts_to_translate.append(str(analysis[key]))
+                    text_keys.append(key)
+
+            # Array fields (translate each item)
+            for key in ["contributions", "limitations", "practical_takeaways", "future_work"]:
+                if key in analysis and isinstance(analysis[key], list):
+                    for idx, item in enumerate(analysis[key]):
+                        if item:
+                            texts_to_translate.append(str(item))
+                            text_keys.append(f"{key}[{idx}]")
+
+            # Glossary (translate definitions)
+            if "glossary" in analysis and isinstance(analysis["glossary"], dict):
+                for term, definition in analysis["glossary"].items():
+                    if definition:
+                        texts_to_translate.append(str(definition))
+                        text_keys.append(f"glossary.{term}")
+
+            # Nested methods fields
+            if "methods" in analysis and isinstance(analysis["methods"], dict):
+                for method_key in ["overview", "study_design", "data_sources", "sample_size"]:
+                    if method_key in analysis["methods"] and analysis["methods"][method_key]:
+                        texts_to_translate.append(str(analysis["methods"][method_key]))
+                        text_keys.append(f"methods.{method_key}")
+
+            # Nested results fields
+            if "results" in analysis and isinstance(analysis["results"], dict):
+                if "summary" in analysis["results"] and analysis["results"]["summary"]:
+                    texts_to_translate.append(str(analysis["results"]["summary"]))
+                    text_keys.append("results.summary")
+
+                # Translate key_findings array
+                if "key_findings" in analysis["results"] and isinstance(analysis["results"]["key_findings"], list):
+                    for idx, item in enumerate(analysis["results"]["key_findings"]):
+                        if item:
+                            texts_to_translate.append(str(item))
+                            text_keys.append(f"results.key_findings[{idx}]")
+
+                # Translate quantitative_results array
+                if "quantitative_results" in analysis["results"] and isinstance(analysis["results"]["quantitative_results"], list):
+                    for idx, item in enumerate(analysis["results"]["quantitative_results"]):
+                        if item:
+                            texts_to_translate.append(str(item))
+                            text_keys.append(f"results.quantitative_results[{idx}]")
+
+            # Translate using Google Translate
+            print(f"📝 Translating {len(texts_to_translate)} text segments...")
+            translated_texts = await translation_service.translate_batch(
+                texts_to_translate,
+                target_language=language,
+                source_language="en"
             )
 
-            # Cache the translation
+            # Build translated analysis object (deep copy to avoid mutations)
+            translated = copy.deepcopy(analysis)
+
+            for i, key in enumerate(text_keys):
+                if "[" in key:  # Array item
+                    # Parse "key_findings[0]" or "results.key_findings[0]"
+                    if "." in key:
+                        parts = key.split(".")
+                        field_name = parts[0]
+                        array_part = parts[1]
+                        array_name = array_part.split("[")[0]
+                        idx = int(array_part.split("[")[1].rstrip("]"))
+                        if field_name not in translated:
+                            translated[field_name] = {}
+                        if array_name not in translated[field_name]:
+                            translated[field_name][array_name] = []
+                        # Ensure array is long enough
+                        while len(translated[field_name][array_name]) <= idx:
+                            translated[field_name][array_name].append(None)
+                        translated[field_name][array_name][idx] = translated_texts[i]
+                    else:
+                        array_name = key.split("[")[0]
+                        idx = int(key.split("[")[1].rstrip("]"))
+                        if array_name not in translated:
+                            translated[array_name] = []
+                        # Ensure array is long enough
+                        while len(translated[array_name]) <= idx:
+                            translated[array_name].append(None)
+                        translated[array_name][idx] = translated_texts[i]
+                elif "." in key:  # Nested field (including glossary)
+                    parts = key.split(".")
+                    if parts[0] == "glossary":
+                        # Glossary term: key is "glossary.term_name"
+                        term_name = parts[1]
+                        if "glossary" not in translated:
+                            translated["glossary"] = {}
+                        translated["glossary"][term_name] = translated_texts[i]
+                    else:
+                        # Other nested fields
+                        if parts[0] not in translated:
+                            translated[parts[0]] = {}
+                        translated[parts[0]][parts[1]] = translated_texts[i]
+                else:  # Simple field
+                    translated[key] = translated_texts[i]
+
+            # Cache the translation for next time
             cache[language] = translated
             supabase_admin.table("uploads").update({
                 "translation_cache": cache
             }).eq("id", paper_id).execute()
 
+            print(f"✅ Translation complete! Cached for next time.")
+
             return {
                 "paper_id": paper_id,
+                "paper_title": paper_title,
+                "year": year,
+                "authors": authors,
+                "venue": venue,
                 "analysis": translated,
                 "language": language,
                 "from_cache": False,
-                "translation_time": "~1 second"
+                "translation_time": "~1-2 seconds (Google Translate)"
             }
 
         except Exception as e:
@@ -275,7 +434,8 @@ class EnhancedPapersService:
         """
         try:
             result = supabase_admin.table("uploads").select(
-                "id, file_name, created_at, processed, paper_type"
+                "id, file_name, file_size, created_at, processed, paper_type, "
+                "paper_title, year, authors, venue, summary, key_findings"
             ).eq(
                 "user_id", user_id
             ).order(

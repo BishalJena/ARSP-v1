@@ -21,13 +21,42 @@
     "save": "భద్రపరచు"
   },
   "dashboard": {
-    "welcome": "ARSP కి స్వాగతం",
+    "welcome": "డాష్‌బోర్డ్",
+    "welcome_default": "డాష్‌బోర్డ్",
+    "tagline": "మీ పరిశోధన ప్రయాణాన్ని వేగవంతం చేయడానికి AI-ఆధారిత సాధనాలను అన్వేషించండి",
     "topics": "విషయ ఆవిష్కరణ",
+    "topics_desc": "ట్రెండింగ్ పరిశోధన అంశాలను కనుగొని వాటి పరిణామాన్ని ట్రాక్ చేయండి",
     "papers": "పత్రాల విశ్లేషణ",
+    "papers_desc": "AI-ఆధారిత అంతర్దృష్టులతో పరిశోధన పత్రాలను అప్‌లోడ్ చేసి విశ్లేషించండి",
     "plagiarism": "సాహిత్య చౌర్య తనిఖీ",
+    "plagiarism_desc": "అధునాతన ప్లేజరిజం గుర్తింపుతో ప్రామాణికతను నిర్ధారించుకోండి",
     "journals": "జర్నల్ ఫైండర్",
+    "journals_desc": "మీ పరిశోధన కోసం వ్యక్తిగతీకరించిన జర్నల్ సిఫార్సులను పొందండి",
     "government": "ప్రభుత్వ సారూప్యత",
-    "impact": "ప్రభావ అంచనా"
+    "government_desc": "ప్రభుత్వ ప్రాధాన్యతలు మరియు SDG లక్ష్యాలతో పరిశోధనను సమలేఖనం చేయండి",
+    "impact": "ప్రభావ అంచనా",
+    "impact_desc": "మీ పరిశోధన యొక్క వాస్తవ ప్రపంచ ప్రభావాన్ని అంచనా వేయండి",
+    "stats": {
+      "active_projects": "యాక్టివ్ ప్రాజెక్టులు",
+      "active_projects_hint": "పరిశోధన పత్రాన్ని అప్‌లోడ్ చేయడం ద్వారా ప్రారంభించండి",
+      "papers_analyzed": "విశ్లేషించిన పత్రాలు",
+      "papers_analyzed_hint": "మా AI-ఆధారిత విశ్లేషణ సాధనాలను ఉపయోగించండి",
+      "plagiarism_checks": "ప్లేజరిజం తనిఖీలు",
+      "plagiarism_checks_hint": "మీ పని యొక్క ప్రామాణికతను నిర్ధారించుకోండి"
+    },
+    "research_tools": "పరిశోధన సాధనాలు",
+    "getting_started": {
+      "title": "ప్రారంభించడం",
+      "description": "స్మార్ట్ రీసెర్చ్ హబ్‌ను గరిష్టంగా ఉపయోగించుకోవడానికి ఈ దశలను అనుసరించండి",
+      "step1_title": "మీ పరిశోధన పత్రాన్ని అప్‌లోడ్ చేయండి",
+      "step1_desc": "AI-ఆధారిత విశ్లేషణ కోసం పేపర్‌ను అప్‌లోడ్ చేయడం ద్వారా ప్రారంభించండి",
+      "step2_title": "ప్లేజరిజం కోసం తనిఖీ చేయండి",
+      "step2_desc": "సమర్పించే ముందు ప్రామాణికతను నిర్ధారించుకోండి",
+      "step3_title": "సరైన జర్నల్‌ను కనుగొనండి",
+      "step3_desc": "వ్యక్తిగతీకరించిన జర్నల్ సిఫార్సులను పొందండి",
+      "step4_title": "పరిశోధన ప్రభావాన్ని అంచనా వేయండి",
+      "step4_desc": "మీ పని యొక్క సంభావ్య ప్రభావాన్ని అర్థం చేసుకోండి"
+    }
   },
   "topics": {
     "title": "విషయ ఆవిష్కరణ",
@@ -70,18 +99,79 @@
     "title": "ప్లేజరిజం తనిఖీ",
     "description": "అధునాతన AI-ఆధారిత ప్లేజరిజం గుర్తింపుతో ప్రామాణికతను నిర్ధారించుకోండి",
     "check_title": "మీ టెక్స్ట్‌ను తనిఖీ చేయండి",
-    "check_description": "ప్లేజరిజం కోసం తనిఖీ చేయడానికి మరియు ప్రామాణికత స్కోర్ పొందడానికి మీ టెక్స్ట్‌ను క్రింద పేస్ట్ చేయండి",
-    "text_placeholder": "మీ టెక్స్ట్‌ను ఇక్కడ నమోదు చేయండి...",
+    "check_description": "ప్లేజరిజం కోసం తనిఖీ చేయడానికి మరియు ఒరిజినాలిటీ స్కోర్ పొందడానికి మీ సారాంశం లేదా పరిశోధన పాఠ్యాన్ని క్రింద పేస్ట్ చేయండి",
+    "text_placeholder": "మీ పరిశోధన సారాంశం లేదా పాఠ్యాన్ని ఇక్కడ పేస్ట్ చేయండి (కనీసం 100 అక్షరాలు)...",
     "button_check": "ప్లేజరిజం తనిఖీ చేయండి",
-    "checking": "తనిఖీ చేస్తోంది...",
+    "checking": "మీ పాఠ్యాన్ని విశ్లేషిస్తోంది...",
     "originality_score": "ప్రామాణికత స్కోర్",
-    "plagiarism_level_high": "అధిక ప్రామాణికత",
-    "plagiarism_level_medium": "మధ్యస్థ ప్రామాణికత",
-    "plagiarism_level_low": "తక్కువ ప్రామాణికత",
+    "plagiarism_score": "Plagiarism Score",
+    "plagiarism_level_high": "అద్భుతమైనది",
+    "plagiarism_level_medium": "మంచిది",
+    "plagiarism_level_low": "సమీక్ష అవసరం",
     "similar_sources": "సమాన మూలాలు",
+    "source_breakdown": "Source Breakdown",
+    "source_breakdown_desc": "Papers with overlapping content",
+    "similar_sources_desc": "Sources where similar content was found",
     "similarity": "సారూప్యత",
     "matched_text": "సరిపోలిన టెక్స్ట్",
-    "confidence": "నమ్మకం"
+    "confidence": "నమ్మకం",
+    "flagged_sections": "Flagged Sections",
+    "flagged_sections_desc": "Text segments that match existing sources",
+    "common_terms": "Common Academic Terms",
+    "common_terms_desc": "These terms are commonly used in academic literature and don't necessarily indicate plagiarism.",
+    "stats": {
+      "total_words": "Total Words",
+      "similar_words": "Similar Words",
+      "sources_scanned": "Sources Scanned",
+      "scan_time": "Scan Time"
+    },
+    "severity": {
+      "high": "High Priority",
+      "medium": "Medium Priority",
+      "low": "Low Priority"
+    },
+    "labels": {
+      "match": "Match",
+      "similar": "Similar",
+      "overlap": "overlap",
+      "words_matched": "Words Matched",
+      "section_of": "Section {{current}} of {{total}}",
+      "action_required": "Action Required",
+      "very_similar": "Very similar!"
+    },
+    "messages": {
+      "action_required_text": "This section is nearly identical to an existing source. Rewrite or cite properly.",
+      "no_data_banner": "These sources were flagged as similar. Detailed word-level analysis not available for all sources.",
+      "scroll_to_see_all": "Scroll to see all",
+      "view_source": "View source",
+      "view_original_source": "View original source",
+      "no_plagiarism_title": "Excellent! No Plagiarism Detected",
+      "no_plagiarism_desc": "Your text shows high originality. Great work!",
+      "empty_title": "Ready to Check for Plagiarism",
+      "empty_desc": "Paste your text above to get started"
+    },
+    "tips": {
+      "title": "Tips for Researchers",
+      "paraphrase": "Paraphrase properly and add your own analysis",
+      "cite": "Add proper citations for all sources",
+      "quotes": "Use direct quotes sparingly and mark them clearly",
+      "analysis": "Include your own critical analysis and interpretation"
+    },
+    "empty": {
+      "feature1_title": "Internet-Wide Scan",
+      "feature1_desc": "Check against millions of sources online",
+      "feature2_title": "Instant Results",
+      "feature2_desc": "Get detailed plagiarism reports in seconds",
+      "feature3_title": "Source Attribution",
+      "feature3_desc": "See exactly where similar content appears"
+    },
+    "results": {
+      "your_text": "Your Text",
+      "matching_source": "Matching Source",
+      "language_detected": "Language Detected",
+      "processing_time": "Processing Time",
+      "sources_checked": "Sources Checked"
+    }
   },
   "journals": {
     "title": "జర్నల్ ఫైండర్",

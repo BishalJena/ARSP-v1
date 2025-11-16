@@ -11,7 +11,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { apiClient } from '@/lib/api-client';
-import { Building2, Loader2, Target, Award, DollarSign } from 'lucide-react';
+import { Building2, Loader2, Target, Award, DollarSign, Info } from 'lucide-react';
 
 interface GovernmentScheme {
   scheme_name: string;
@@ -102,8 +102,18 @@ export default function GovernmentPage() {
           </p>
         </div>
 
+        {/* Coming Soon Banner */}
+        <Alert className="bg-blue-50 border-blue-200">
+          <Info className="h-4 w-4 text-blue-600" />
+          <AlertDescription className="text-blue-800">
+            <span className="font-semibold">Coming Soon!</span> This feature is currently under development.
+            The Government Alignment tool will help you match your research with government priorities,
+            SDG goals, and funding opportunities. Check back in the next release (v2.2).
+          </AlertDescription>
+        </Alert>
+
         {/* Input Form */}
-        <Card>
+        <Card className="opacity-60 pointer-events-none">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Building2 className="h-5 w-5" />

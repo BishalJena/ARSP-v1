@@ -21,13 +21,42 @@
     "save": "保存"
   },
   "dashboard": {
-    "welcome": "欢迎使用 ARSP",
+    "welcome": "仪表板",
+    "welcome_default": "仪表板",
+    "tagline": "探索 AI 驱动的工具，加速您的研究旅程",
     "topics": "主题发现",
+    "topics_desc": "发现热门研究主题并追踪其发展",
     "papers": "论文分析",
+    "papers_desc": "上传并使用 AI 提供的洞察分析研究论文",
     "plagiarism": "抄袭检查",
+    "plagiarism_desc": "通过先进的查重检测确保原创性",
     "journals": "期刊推荐",
+    "journals_desc": "为您的研究获取个性化的期刊推荐",
     "government": "政策对齐",
-    "impact": "影响力预测"
+    "government_desc": "使研究与政府优先事项和可持续发展目标（SDG）保持一致",
+    "impact": "影响力预测",
+    "impact_desc": "预测您的研究在现实世界中的影响",
+    "stats": {
+      "active_projects": "活跃项目",
+      "active_projects_hint": "从上传研究论文开始",
+      "papers_analyzed": "已分析论文",
+      "papers_analyzed_hint": "使用我们的 AI 驱动分析工具",
+      "plagiarism_checks": "查重检测",
+      "plagiarism_checks_hint": "确保您的工作原创性"
+    },
+    "research_tools": "研究工具",
+    "getting_started": {
+      "title": "入门指南",
+      "description": "按照以下步骤充分利用 Smart Research Hub",
+      "step1_title": "上传您的研究论文",
+      "step1_desc": "从上传论文以进行 AI 驱动分析开始",
+      "step2_title": "进行查重检测",
+      "step2_desc": "在提交前确保原创性",
+      "step3_title": "寻找理想期刊",
+      "step3_desc": "获取个性化的期刊推荐",
+      "step4_title": "预测研究影响",
+      "step4_desc": "了解您的工作可能产生的影响"
+    }
   },
   "topics": {
     "title": "主题发现",
@@ -70,18 +99,79 @@
     "title": "查重检测",
     "description": "通过先进的 AI 驱动查重检测确保原创性",
     "check_title": "检查您的文本",
-    "check_description": "在下方粘贴您的文本以检查重复率并获取原创性评分",
-    "text_placeholder": "在此输入您的文本...",
+    "check_description": "在下方粘贴您的摘要或研究文本，以检查抄袭情况并获取原创性评分",
+    "text_placeholder": "在此粘贴您的研究摘要或文本（至少 100 个字符）...",
     "button_check": "检查重复率",
-    "checking": "正在检查...",
+    "checking": "正在分析您的文本...",
     "originality_score": "原创性评分",
-    "plagiarism_level_high": "高原创性",
-    "plagiarism_level_medium": "中等原创性",
-    "plagiarism_level_low": "低原创性",
+    "plagiarism_score": "Plagiarism Score",
+    "plagiarism_level_high": "优秀",
+    "plagiarism_level_medium": "良好",
+    "plagiarism_level_low": "需要审查",
     "similar_sources": "相似来源",
+    "source_breakdown": "Source Breakdown",
+    "source_breakdown_desc": "Papers with overlapping content",
+    "similar_sources_desc": "Sources where similar content was found",
     "similarity": "相似度",
     "matched_text": "匹配文本",
-    "confidence": "置信度"
+    "confidence": "置信度",
+    "flagged_sections": "Flagged Sections",
+    "flagged_sections_desc": "Text segments that match existing sources",
+    "common_terms": "Common Academic Terms",
+    "common_terms_desc": "These terms are commonly used in academic literature and don't necessarily indicate plagiarism.",
+    "stats": {
+      "total_words": "Total Words",
+      "similar_words": "Similar Words",
+      "sources_scanned": "Sources Scanned",
+      "scan_time": "Scan Time"
+    },
+    "severity": {
+      "high": "High Priority",
+      "medium": "Medium Priority",
+      "low": "Low Priority"
+    },
+    "labels": {
+      "match": "Match",
+      "similar": "Similar",
+      "overlap": "overlap",
+      "words_matched": "Words Matched",
+      "section_of": "Section {{current}} of {{total}}",
+      "action_required": "Action Required",
+      "very_similar": "Very similar!"
+    },
+    "messages": {
+      "action_required_text": "This section is nearly identical to an existing source. Rewrite or cite properly.",
+      "no_data_banner": "These sources were flagged as similar. Detailed word-level analysis not available for all sources.",
+      "scroll_to_see_all": "Scroll to see all",
+      "view_source": "View source",
+      "view_original_source": "View original source",
+      "no_plagiarism_title": "Excellent! No Plagiarism Detected",
+      "no_plagiarism_desc": "Your text shows high originality. Great work!",
+      "empty_title": "Ready to Check for Plagiarism",
+      "empty_desc": "Paste your text above to get started"
+    },
+    "tips": {
+      "title": "Tips for Researchers",
+      "paraphrase": "Paraphrase properly and add your own analysis",
+      "cite": "Add proper citations for all sources",
+      "quotes": "Use direct quotes sparingly and mark them clearly",
+      "analysis": "Include your own critical analysis and interpretation"
+    },
+    "empty": {
+      "feature1_title": "Internet-Wide Scan",
+      "feature1_desc": "Check against millions of sources online",
+      "feature2_title": "Instant Results",
+      "feature2_desc": "Get detailed plagiarism reports in seconds",
+      "feature3_title": "Source Attribution",
+      "feature3_desc": "See exactly where similar content appears"
+    },
+    "results": {
+      "your_text": "Your Text",
+      "matching_source": "Matching Source",
+      "language_detected": "Language Detected",
+      "processing_time": "Processing Time",
+      "sources_checked": "Sources Checked"
+    }
   },
   "journals": {
     "title": "期刊推荐",

@@ -21,13 +21,42 @@
     "save": "保存"
   },
   "dashboard": {
-    "welcome": "ARSPへようこそ",
+    "welcome": "ダッシュボード",
+    "welcome_default": "ダッシュボード",
+    "tagline": "AIを活用したツールで研究の旅を加速しましょう",
     "topics": "トピック発見",
+    "topics_desc": "トレンドの研究トピックを発見し、その進化を追跡する",
     "papers": "論文分析",
+    "papers_desc": "AIを活用したインサイトで研究論文をアップロードして分析",
     "plagiarism": "盗用チェック",
+    "plagiarism_desc": "高度な盗用検出で独自性を確保",
     "journals": "ジャーナルファインダー",
+    "journals_desc": "あなたの研究に合わせたパーソナライズされたジャーナル推薦を取得",
     "government": "政府方針との整合性",
-    "impact": "影響予測"
+    "government_desc": "研究を政府の優先事項やSDG目標に合わせる",
+    "impact": "影響予測",
+    "impact_desc": "あなたの研究の実世界への影響を予測",
+    "stats": {
+      "active_projects": "アクティブなプロジェクト",
+      "active_projects_hint": "研究論文をアップロードして始めましょう",
+      "papers_analyzed": "分析された論文",
+      "papers_analyzed_hint": "AIを活用した分析ツールを使用する",
+      "plagiarism_checks": "盗用チェック",
+      "plagiarism_checks_hint": "あなたの作品の独自性を確保"
+    },
+    "research_tools": "研究ツール",
+    "getting_started": {
+      "title": "はじめに",
+      "description": "スマートリサーチハブを最大限に活用するためにこれらのステップに従ってください",
+      "step1_title": "研究論文をアップロード",
+      "step1_desc": "AIを活用した分析のために論文をアップロードして始める",
+      "step2_title": "盗用をチェック",
+      "step2_desc": "提出前に独自性を確保",
+      "step3_title": "最適なジャーナルを見つける",
+      "step3_desc": "パーソナライズされたジャーナル推薦を取得",
+      "step4_title": "研究の影響を予測",
+      "step4_desc": "あなたの研究の潜在的な影響を理解する"
+    }
   },
   "topics": {
     "title": "トピック発見",
@@ -70,18 +99,79 @@
     "title": "盗用チェック",
     "description": "AI搭載の高度な盗用検出で独自性を確保",
     "check_title": "テキストをチェック",
-    "check_description": "テキストを下に貼り付けて盗用をチェックし、独自性スコアを取得",
-    "text_placeholder": "ここにテキストを入力してください...",
+    "check_description": "盗用をチェックし、独自性スコアを取得するには、以下に要約または研究テキストを貼り付けてください",
+    "text_placeholder": "研究の要約またはテキストをここに貼り付けてください（最低100文字）...",
     "button_check": "盗用をチェック",
-    "checking": "チェック中...",
+    "checking": "テキストを分析中...",
     "originality_score": "独自性スコア",
-    "plagiarism_level_high": "高い独自性",
-    "plagiarism_level_medium": "中程度の独自性",
-    "plagiarism_level_low": "低い独自性",
+    "plagiarism_score": "Plagiarism Score",
+    "plagiarism_level_high": "優秀",
+    "plagiarism_level_medium": "良好",
+    "plagiarism_level_low": "要確認",
     "similar_sources": "類似ソース",
+    "source_breakdown": "Source Breakdown",
+    "source_breakdown_desc": "Papers with overlapping content",
+    "similar_sources_desc": "Sources where similar content was found",
     "similarity": "類似性",
     "matched_text": "一致したテキスト",
-    "confidence": "信頼度"
+    "confidence": "信頼度",
+    "flagged_sections": "Flagged Sections",
+    "flagged_sections_desc": "Text segments that match existing sources",
+    "common_terms": "Common Academic Terms",
+    "common_terms_desc": "These terms are commonly used in academic literature and don't necessarily indicate plagiarism.",
+    "stats": {
+      "total_words": "Total Words",
+      "similar_words": "Similar Words",
+      "sources_scanned": "Sources Scanned",
+      "scan_time": "Scan Time"
+    },
+    "severity": {
+      "high": "High Priority",
+      "medium": "Medium Priority",
+      "low": "Low Priority"
+    },
+    "labels": {
+      "match": "Match",
+      "similar": "Similar",
+      "overlap": "overlap",
+      "words_matched": "Words Matched",
+      "section_of": "Section {{current}} of {{total}}",
+      "action_required": "Action Required",
+      "very_similar": "Very similar!"
+    },
+    "messages": {
+      "action_required_text": "This section is nearly identical to an existing source. Rewrite or cite properly.",
+      "no_data_banner": "These sources were flagged as similar. Detailed word-level analysis not available for all sources.",
+      "scroll_to_see_all": "Scroll to see all",
+      "view_source": "View source",
+      "view_original_source": "View original source",
+      "no_plagiarism_title": "Excellent! No Plagiarism Detected",
+      "no_plagiarism_desc": "Your text shows high originality. Great work!",
+      "empty_title": "Ready to Check for Plagiarism",
+      "empty_desc": "Paste your text above to get started"
+    },
+    "tips": {
+      "title": "Tips for Researchers",
+      "paraphrase": "Paraphrase properly and add your own analysis",
+      "cite": "Add proper citations for all sources",
+      "quotes": "Use direct quotes sparingly and mark them clearly",
+      "analysis": "Include your own critical analysis and interpretation"
+    },
+    "empty": {
+      "feature1_title": "Internet-Wide Scan",
+      "feature1_desc": "Check against millions of sources online",
+      "feature2_title": "Instant Results",
+      "feature2_desc": "Get detailed plagiarism reports in seconds",
+      "feature3_title": "Source Attribution",
+      "feature3_desc": "See exactly where similar content appears"
+    },
+    "results": {
+      "your_text": "Your Text",
+      "matching_source": "Matching Source",
+      "language_detected": "Language Detected",
+      "processing_time": "Processing Time",
+      "sources_checked": "Sources Checked"
+    }
   },
   "journals": {
     "title": "ジャーナルファインダー",

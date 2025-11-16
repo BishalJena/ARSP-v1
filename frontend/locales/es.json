@@ -21,13 +21,42 @@
     "save": "Guardar"
   },
   "dashboard": {
-    "welcome": "Bienvenido a ARSP",
+    "welcome": "Panel de control",
+    "welcome_default": "Panel de control",
+    "tagline": "Explora herramientas impulsadas por IA para acelerar tu proceso de investigación",
     "topics": "Descubrimiento de temas",
+    "topics_desc": "Descubre temas de investigación en tendencia y sigue su evolución",
     "papers": "Análisis de artículos",
+    "papers_desc": "Sube y analiza artículos de investigación con información basada en IA",
     "plagiarism": "Verificación de plagio",
+    "plagiarism_desc": "Asegura la originalidad con detección de plagio avanzada",
     "journals": "Buscador de revistas",
+    "journals_desc": "Obtén recomendaciones personalizadas de revistas para tu investigación",
     "government": "Alineación gubernamental",
-    "impact": "Predicción de impacto"
+    "government_desc": "Alinea la investigación con prioridades gubernamentales y objetivos de desarrollo sostenible",
+    "impact": "Predicción de impacto",
+    "impact_desc": "Predice el impacto real de tu investigación",
+    "stats": {
+      "active_projects": "Proyectos activos",
+      "active_projects_hint": "Comienza subiendo un artículo de investigación",
+      "papers_analyzed": "Artículos analizados",
+      "papers_analyzed_hint": "Utiliza nuestras herramientas de análisis impulsadas por IA",
+      "plagiarism_checks": "Verificaciones de plagio",
+      "plagiarism_checks_hint": "Asegura la originalidad de tu trabajo"
+    },
+    "research_tools": "Herramientas de investigación",
+    "getting_started": {
+      "title": "Primeros pasos",
+      "description": "Sigue estos pasos para aprovechar al máximo Smart Research Hub",
+      "step1_title": "Sube tu artículo de investigación",
+      "step1_desc": "Comienza subiendo un artículo para análisis impulsado por IA",
+      "step2_title": "Verifica el plagio",
+      "step2_desc": "Asegura la originalidad antes de enviar",
+      "step3_title": "Encuentra la revista perfecta",
+      "step3_desc": "Obtén recomendaciones personalizadas de revistas",
+      "step4_title": "Predice el impacto de la investigación",
+      "step4_desc": "Comprende el impacto potencial de tu trabajo"
+    }
   },
   "topics": {
     "title": "Descubrimiento de temas",
@@ -70,18 +99,79 @@
     "title": "Verificación de plagio",
     "description": "Asegura la originalidad con detección de plagio avanzada impulsada por IA",
     "check_title": "Revisa tu texto",
-    "check_description": "Pega tu texto a continuación para verificar plagio y obtener una puntuación de originalidad",
-    "text_placeholder": "Introduce tu texto aquí...",
+    "check_description": "Pega tu resumen o texto de investigación a continuación para verificar el plagio y obtener una puntuación de originalidad",
+    "text_placeholder": "Pega tu resumen o texto de investigación aquí (mínimo 100 caracteres)...",
     "button_check": "Verificar plagio",
-    "checking": "Verificando...",
+    "checking": "Analizando tu texto...",
     "originality_score": "Puntuación de originalidad",
-    "plagiarism_level_high": "Alta originalidad",
-    "plagiarism_level_medium": "Originalidad media",
-    "plagiarism_level_low": "Baja originalidad",
+    "plagiarism_score": "Plagiarism Score",
+    "plagiarism_level_high": "Excelente",
+    "plagiarism_level_medium": "Bueno",
+    "plagiarism_level_low": "Necesita revisión",
     "similar_sources": "Fuentes similares",
+    "source_breakdown": "Source Breakdown",
+    "source_breakdown_desc": "Papers with overlapping content",
+    "similar_sources_desc": "Sources where similar content was found",
     "similarity": "Similitud",
     "matched_text": "Texto coincidente",
-    "confidence": "Confianza"
+    "confidence": "Confianza",
+    "flagged_sections": "Flagged Sections",
+    "flagged_sections_desc": "Text segments that match existing sources",
+    "common_terms": "Common Academic Terms",
+    "common_terms_desc": "These terms are commonly used in academic literature and don't necessarily indicate plagiarism.",
+    "stats": {
+      "total_words": "Total Words",
+      "similar_words": "Similar Words",
+      "sources_scanned": "Sources Scanned",
+      "scan_time": "Scan Time"
+    },
+    "severity": {
+      "high": "High Priority",
+      "medium": "Medium Priority",
+      "low": "Low Priority"
+    },
+    "labels": {
+      "match": "Match",
+      "similar": "Similar",
+      "overlap": "overlap",
+      "words_matched": "Words Matched",
+      "section_of": "Section {{current}} of {{total}}",
+      "action_required": "Action Required",
+      "very_similar": "Very similar!"
+    },
+    "messages": {
+      "action_required_text": "This section is nearly identical to an existing source. Rewrite or cite properly.",
+      "no_data_banner": "These sources were flagged as similar. Detailed word-level analysis not available for all sources.",
+      "scroll_to_see_all": "Scroll to see all",
+      "view_source": "View source",
+      "view_original_source": "View original source",
+      "no_plagiarism_title": "Excellent! No Plagiarism Detected",
+      "no_plagiarism_desc": "Your text shows high originality. Great work!",
+      "empty_title": "Ready to Check for Plagiarism",
+      "empty_desc": "Paste your text above to get started"
+    },
+    "tips": {
+      "title": "Tips for Researchers",
+      "paraphrase": "Paraphrase properly and add your own analysis",
+      "cite": "Add proper citations for all sources",
+      "quotes": "Use direct quotes sparingly and mark them clearly",
+      "analysis": "Include your own critical analysis and interpretation"
+    },
+    "empty": {
+      "feature1_title": "Internet-Wide Scan",
+      "feature1_desc": "Check against millions of sources online",
+      "feature2_title": "Instant Results",
+      "feature2_desc": "Get detailed plagiarism reports in seconds",
+      "feature3_title": "Source Attribution",
+      "feature3_desc": "See exactly where similar content appears"
+    },
+    "results": {
+      "your_text": "Your Text",
+      "matching_source": "Matching Source",
+      "language_detected": "Language Detected",
+      "processing_time": "Processing Time",
+      "sources_checked": "Sources Checked"
+    }
   },
   "journals": {
     "title": "Buscador de revistas",

@@ -27,42 +27,159 @@ async def check_plagiarism(
     current_user: Optional[dict] = Depends(get_current_user_optional)
 ):
     """
-    Check text for plagiarism using semantic similarity.
+    Check text, file, or website for plagiarism.
 
-    Uses Sentence Transformers to detect paraphrased content.
-    Returns originality score, flagged sections, and citation suggestions.
+    **Winston AI (Recommended - use_winston=true)**:
+    - Internet-wide plagiarism detection
+    - 45+ language support with auto-detection
+    - Supports text, file URLs, and websites
+    - Attack detection (zero-width spaces, homoglyphs)
+    - Detailed source attribution with snippets
+    - Citation detection
+
+    **Legacy (use_winston=false)**:
+    - Academic paper comparison via Semantic Scholar
+    - Sentence Transformers semantic similarity
+    - Limited language support
+
+    **Priority**: website > file_url > text
+
+    **Limits**:
+    - Text: 100-120,000 characters
+    - Files: PDF, DOC, DOCX (must be publicly accessible)
     """
     try:
-        # Translate text to English if needed (for accurate plagiarism detection)
-        text_to_check = request.text
-        if request.language and request.language != "en":
-            text_to_check = await translation_service.translate_text(
-                request.text,
-                target_language="en",
-                source_language=request.language
+        # Validate that at least one input is provided
+        if not request.text and not request.file_url and not request.website:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="At least one of text, file_url, or website must be provided"
             )
 
-        # Use Semantic Scholar hybrid detection for better accuracy
-        result = await semantic_scholar_service.detect_plagiarism_hybrid(
-            text=text_to_check,
-            check_online=request.check_online if request.check_online is not None else True
-        )
+        # Use Winston AI enhanced detection (recommended)
+        if request.use_winston:
+            result = await plagiarism_service.check_plagiarism_enhanced(
+                text=request.text,
+                file_url=request.file_url,
+                website=request.website,
+                excluded_sources=request.excluded_sources,
+                language=request.language or "auto",
+                country=request.country or "us",
+                use_winston=True
+            )
 
-        # Translate flagged sections back to user's language if needed
-        if request.language and request.language != "en" and result.get("flagged_sections"):
-            sections_text = [section["text"] for section in result["flagged_sections"]]
-            if sections_text:
-                translated_sections = await translation_service.translate_batch(
-                    sections_text,
-                    target_language=request.language,
-                    source_language="en"
+            # Translate Winston AI results to user's language if needed
+            if request.language and request.language not in ["en", "auto"]:
+                # Translate source titles and snippets
+                if result.get("sources"):
+                    titles = [s["title"] for s in result["sources"] if s.get("title")]
+                    snippets = [s["snippet"] for s in result["sources"] if s.get("snippet")]
+
+                    if titles:
+                        translated_titles = await translation_service.translate_batch(
+                            titles,
+                            target_language=request.language,
+                            source_language="en"
+                        )
+                        # Map back to sources
+                        title_idx = 0
+                        for source in result["sources"]:
+                            if source.get("title"):
+                                source["title"] = translated_titles[title_idx]
+                                title_idx += 1
+
+                    if snippets:
+                        translated_snippets = await translation_service.translate_batch(
+                            snippets,
+                            target_language=request.language,
+                            source_language="en"
+                        )
+                        # Map back to sources
+                        snippet_idx = 0
+                        for source in result["sources"]:
+                            if source.get("snippet"):
+                                source["snippet"] = translated_snippets[snippet_idx]
+                                snippet_idx += 1
+
+                # Translate flagged section texts and snippets
+                if result.get("flagged_sections"):
+                    texts = [s["text"] for s in result["flagged_sections"] if s.get("text")]
+                    sources = [s["source"] for s in result["flagged_sections"] if s.get("source")]
+                    snippets = [s["snippet"] for s in result["flagged_sections"] if s.get("snippet")]
+
+                    if texts:
+                        translated_texts = await translation_service.translate_batch(
+                            texts,
+                            target_language=request.language,
+                            source_language="en"
+                        )
+                        text_idx = 0
+                        for section in result["flagged_sections"]:
+                            if section.get("text"):
+                                section["text"] = translated_texts[text_idx]
+                                text_idx += 1
+
+                    if sources:
+                        translated_sources = await translation_service.translate_batch(
+                            sources,
+                            target_language=request.language,
+                            source_language="en"
+                        )
+                        source_idx = 0
+                        for section in result["flagged_sections"]:
+                            if section.get("source"):
+                                section["source"] = translated_sources[source_idx]
+                                source_idx += 1
+
+                    if snippets:
+                        translated_snippets = await translation_service.translate_batch(
+                            snippets,
+                            target_language=request.language,
+                            source_language="en"
+                        )
+                        snippet_idx = 0
+                        for section in result["flagged_sections"]:
+                            if section.get("snippet"):
+                                section["snippet"] = translated_snippets[snippet_idx]
+                                snippet_idx += 1
+        else:
+            # Legacy method - requires text
+            if not request.text:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Text is required when use_winston=false"
                 )
-                for i, section in enumerate(result["flagged_sections"]):
-                    if i < len(translated_sections):
-                        section["text"] = translated_sections[i]
+
+            # Translate text to English if needed (for accurate plagiarism detection)
+            text_to_check = request.text
+            if request.language and request.language not in ["en", "auto"]:
+                text_to_check = await translation_service.translate_text(
+                    request.text,
+                    target_language="en",
+                    source_language=request.language
+                )
+
+            # Use legacy Semantic Scholar hybrid detection
+            result = await semantic_scholar_service.detect_plagiarism_hybrid(
+                text=text_to_check,
+                check_online=request.check_online if request.check_online is not None else True
+            )
+
+            # Translate flagged sections back to user's language if needed
+            if request.language and request.language not in ["en", "auto"] and result.get("flagged_sections"):
+                sections_text = [section["text"] for section in result["flagged_sections"]]
+                if sections_text:
+                    translated_sections = await translation_service.translate_batch(
+                        sections_text,
+                        target_language=request.language,
+                        source_language="en"
+                    )
+                    for i, section in enumerate(result["flagged_sections"]):
+                        if i < len(translated_sections):
+                            section["text"] = translated_sections[i]
 
         # Store result in database (for history) - only if user is logged in
-        if current_user:
+        if current_user and request.text:  # Only store text checks (not file/website)
             user_id = current_user["user_id"]
 
             # Check if draft exists, update or create
@@ -70,8 +187,8 @@ async def check_plagiarism(
 
             draft_data = {
                 "user_id": user_id,
-                "content": request.text,
-                "plagiarism_score": result["originality_score"],
+                "content": request.text[:50000],  # Limit stored content
+                "plagiarism_score": result.get("originality_score", 0),
                 "last_checked_at": result["checked_at"]
             }
 
@@ -84,6 +201,8 @@ async def check_plagiarism(
 
         return PlagiarismCheckResponse(**result)
 
+    except HTTPException:
+        raise  # Re-raise HTTP exceptions
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

@@ -21,13 +21,42 @@
     "save": "저장"
   },
   "dashboard": {
-    "welcome": "ARSP에 오신 것을 환영합니다",
+    "welcome": "대시보드",
+    "welcome_default": "대시보드",
+    "tagline": "AI 기반 도구로 연구 여정을 가속화하세요",
     "topics": "주제 발견",
+    "topics_desc": "트렌드 연구 주제를 발견하고 그 발전을 추적하세요",
     "papers": "논문 분석",
+    "papers_desc": "AI 기반 인사이트로 연구 논문을 업로드하고 분석하세요",
     "plagiarism": "표절 검사",
+    "plagiarism_desc": "고급 표절 감지로 독창성을 확보하세요",
     "journals": "저널 찾기",
+    "journals_desc": "연구를 위한 맞춤형 저널 추천을 받으세요",
     "government": "정부 정책 연계",
-    "impact": "영향력 예측"
+    "government_desc": "정부 우선순위 및 SDG 목표와 연구를 일치시키세요",
+    "impact": "영향력 예측",
+    "impact_desc": "연구의 실제 영향력을 예측하세요",
+    "stats": {
+      "active_projects": "활성 프로젝트",
+      "active_projects_hint": "연구 논문 업로드로 시작하세요",
+      "papers_analyzed": "분석된 논문",
+      "papers_analyzed_hint": "AI 기반 분석 도구를 사용하세요",
+      "plagiarism_checks": "표절 검사",
+      "plagiarism_checks_hint": "작업의 독창성을 확보하세요"
+    },
+    "research_tools": "연구 도구",
+    "getting_started": {
+      "title": "시작하기",
+      "description": "스마트 리서치 허브를 최대한 활용하기 위해 다음 단계를 따르세요",
+      "step1_title": "연구 논문 업로드하기",
+      "step1_desc": "AI 기반 분석을 위해 논문 업로드로 시작하세요",
+      "step2_title": "표절 검사하기",
+      "step2_desc": "제출 전 독창성을 확보하세요",
+      "step3_title": "완벽한 저널 찾기",
+      "step3_desc": "맞춤형 저널 추천을 받으세요",
+      "step4_title": "연구 영향력 예측하기",
+      "step4_desc": "당신의 연구가 가져올 잠재적 영향력 이해하기"
+    }
   },
   "topics": {
     "title": "주제 발견",
@@ -70,18 +99,79 @@
     "title": "표절 검사",
     "description": "고급 AI 기반 표절 감지로 독창성을 확보하세요",
     "check_title": "텍스트 검사하기",
-    "check_description": "표절을 확인하고 독창성 점수를 받으려면 아래에 텍스트를 붙여넣으세요",
-    "text_placeholder": "여기에 텍스트를 입력하세요...",
+    "check_description": "표절 검사를 위해 초록이나 연구 텍스트를 아래에 붙여넣고 독창성 점수를 받으세요",
+    "text_placeholder": "연구 초록이나 텍스트를 여기에 붙여넣으세요(최소 100자)...",
     "button_check": "표절 검사",
-    "checking": "검사 중...",
+    "checking": "텍스트 분석 중...",
     "originality_score": "독창성 점수",
-    "plagiarism_level_high": "높은 독창성",
-    "plagiarism_level_medium": "중간 독창성",
-    "plagiarism_level_low": "낮은 독창성",
+    "plagiarism_score": "Plagiarism Score",
+    "plagiarism_level_high": "우수함",
+    "plagiarism_level_medium": "양호함",
+    "plagiarism_level_low": "검토 필요",
     "similar_sources": "유사한 출처",
+    "source_breakdown": "Source Breakdown",
+    "source_breakdown_desc": "Papers with overlapping content",
+    "similar_sources_desc": "Sources where similar content was found",
     "similarity": "유사도",
     "matched_text": "일치하는 텍스트",
-    "confidence": "신뢰도"
+    "confidence": "신뢰도",
+    "flagged_sections": "Flagged Sections",
+    "flagged_sections_desc": "Text segments that match existing sources",
+    "common_terms": "Common Academic Terms",
+    "common_terms_desc": "These terms are commonly used in academic literature and don't necessarily indicate plagiarism.",
+    "stats": {
+      "total_words": "Total Words",
+      "similar_words": "Similar Words",
+      "sources_scanned": "Sources Scanned",
+      "scan_time": "Scan Time"
+    },
+    "severity": {
+      "high": "High Priority",
+      "medium": "Medium Priority",
+      "low": "Low Priority"
+    },
+    "labels": {
+      "match": "Match",
+      "similar": "Similar",
+      "overlap": "overlap",
+      "words_matched": "Words Matched",
+      "section_of": "Section {{current}} of {{total}}",
+      "action_required": "Action Required",
+      "very_similar": "Very similar!"
+    },
+    "messages": {
+      "action_required_text": "This section is nearly identical to an existing source. Rewrite or cite properly.",
+      "no_data_banner": "These sources were flagged as similar. Detailed word-level analysis not available for all sources.",
+      "scroll_to_see_all": "Scroll to see all",
+      "view_source": "View source",
+      "view_original_source": "View original source",
+      "no_plagiarism_title": "Excellent! No Plagiarism Detected",
+      "no_plagiarism_desc": "Your text shows high originality. Great work!",
+      "empty_title": "Ready to Check for Plagiarism",
+      "empty_desc": "Paste your text above to get started"
+    },
+    "tips": {
+      "title": "Tips for Researchers",
+      "paraphrase": "Paraphrase properly and add your own analysis",
+      "cite": "Add proper citations for all sources",
+      "quotes": "Use direct quotes sparingly and mark them clearly",
+      "analysis": "Include your own critical analysis and interpretation"
+    },
+    "empty": {
+      "feature1_title": "Internet-Wide Scan",
+      "feature1_desc": "Check against millions of sources online",
+      "feature2_title": "Instant Results",
+      "feature2_desc": "Get detailed plagiarism reports in seconds",
+      "feature3_title": "Source Attribution",
+      "feature3_desc": "See exactly where similar content appears"
+    },
+    "results": {
+      "your_text": "Your Text",
+      "matching_source": "Matching Source",
+      "language_detected": "Language Detected",
+      "processing_time": "Processing Time",
+      "sources_checked": "Sources Checked"
+    }
   },
   "journals": {
     "title": "저널 찾기",

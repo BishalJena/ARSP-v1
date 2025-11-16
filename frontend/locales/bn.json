@@ -21,13 +21,42 @@
     "save": "সংরক্ষণ"
   },
   "dashboard": {
-    "welcome": "ARSP-তে স্বাগতম",
+    "welcome": "ড্যাশবোর্ড",
+    "welcome_default": "ড্যাশবোর্ড",
+    "tagline": "আপনার গবেষণা যাত্রা ত্বরান্বিত করতে এআই-চালিত টুল অন্বেষণ করুন",
     "topics": "বিষয় আবিষ্কার",
+    "topics_desc": "ট্রেন্ডিং গবেষণা বিষয়গুলি আবিষ্কার করুন এবং তাদের বিবর্তন ট্র্যাক করুন",
     "papers": "গবেষণাপত্র বিশ্লেষণ",
+    "papers_desc": "এআই-চালিত অন্তর্দৃষ্টি সহ গবেষণা পেপার আপলোড এবং বিশ্লেষণ করুন",
     "plagiarism": "প্লাজিয়ারিজম পরীক্ষা",
+    "plagiarism_desc": "উন্নত নকল সনাক্তকরণ দিয়ে মৌলিকতা নিশ্চিত করুন",
     "journals": "জার্নাল খোঁজার সরঞ্জাম",
+    "journals_desc": "আপনার গবেষণার জন্য ব্যক্তিগতকৃত জার্নাল সুপারিশ পান",
     "government": "সরকারি সামঞ্জস্য",
-    "impact": "প্রভাব পূর্বাভাস"
+    "government_desc": "সরকারি অগ্রাধিকার এবং এসডিজি লক্ষ্যগুলির সাথে গবেষণা সারিবদ্ধ করুন",
+    "impact": "প্রভাব পূর্বাভাস",
+    "impact_desc": "আপনার গবেষণার বাস্তব প্রভাব পূর্বাভাস করুন",
+    "stats": {
+      "active_projects": "সক্রিয় প্রকল্প",
+      "active_projects_hint": "একটি গবেষণা পেপার আপলোড করে শুরু করুন",
+      "papers_analyzed": "বিশ্লেষিত পেপার",
+      "papers_analyzed_hint": "আমাদের এআই-চালিত বিশ্লেষণ টুল ব্যবহার করুন",
+      "plagiarism_checks": "নকল পরীক্ষা",
+      "plagiarism_checks_hint": "আপনার কাজের মৌলিকতা নিশ্চিত করুন"
+    },
+    "research_tools": "গবেষণা টুল",
+    "getting_started": {
+      "title": "শুরু করা",
+      "description": "স্মার্ট রিসার্চ হাব থেকে সর্বাধিক সুবিধা পেতে এই পদক্ষেপগুলি অনুসরণ করুন",
+      "step1_title": "আপনার গবেষণা পেপার আপলোড করুন",
+      "step1_desc": "এআই-চালিত বিশ্লেষণের জন্য একটি পেপার আপলোড করে শুরু করুন",
+      "step2_title": "নকল পরীক্ষা করুন",
+      "step2_desc": "জমা দেওয়ার আগে মৌলিকতা নিশ্চিত করুন",
+      "step3_title": "নিখুঁত জার্নাল খুঁজুন",
+      "step3_desc": "ব্যক্তিগতকৃত জার্নাল সুপারিশ পান",
+      "step4_title": "গবেষণা প্রভাব পূর্বাভাস করুন",
+      "step4_desc": "আপনার কাজের সম্ভাব্য প্রভাব বুঝুন"
+    }
   },
   "topics": {
     "title": "বিষয় আবিষ্কার",
@@ -70,18 +99,79 @@
     "title": "নকল পরীক্ষা",
     "description": "উন্নত এআই-চালিত নকল সনাক্তকরণ দিয়ে মৌলিকতা নিশ্চিত করুন",
     "check_title": "আপনার টেক্সট পরীক্ষা করুন",
-    "check_description": "নকল পরীক্ষা করতে এবং একটি মৌলিকতা স্কোর পেতে নিচে আপনার টেক্সট পেস্ট করুন",
-    "text_placeholder": "এখানে আপনার টেক্সট লিখুন...",
+    "check_description": "নকলের জন্য পরীক্ষা করতে এবং একটি মৌলিকতা স্কোর পেতে নিচে আপনার সারসংক্ষেপ বা গবেষণা টেক্সট পেস্ট করুন",
+    "text_placeholder": "আপনার গবেষণার সারসংক্ষেপ বা টেক্সট এখানে পেস্ট করুন (ন্যূনতম ১০০ অক্ষর)...",
     "button_check": "নকল পরীক্ষা করুন",
-    "checking": "পরীক্ষা করা হচ্ছে...",
+    "checking": "আপনার টেক্সট বিশ্লেষণ করা হচ্ছে...",
     "originality_score": "মৌলিকতা স্কোর",
-    "plagiarism_level_high": "উচ্চ মৌলিকতা",
-    "plagiarism_level_medium": "মাঝারি মৌলিকতা",
-    "plagiarism_level_low": "নিম্ন মৌলিকতা",
+    "plagiarism_score": "Plagiarism Score",
+    "plagiarism_level_high": "চমৎকার",
+    "plagiarism_level_medium": "ভালো",
+    "plagiarism_level_low": "পর্যালোচনা প্রয়োজন",
     "similar_sources": "অনুরূপ উৎস",
+    "source_breakdown": "Source Breakdown",
+    "source_breakdown_desc": "Papers with overlapping content",
+    "similar_sources_desc": "Sources where similar content was found",
     "similarity": "সাদৃশ্য",
     "matched_text": "মিলে যাওয়া টেক্সট",
-    "confidence": "আত্মবিশ্বাস"
+    "confidence": "আত্মবিশ্বাস",
+    "flagged_sections": "Flagged Sections",
+    "flagged_sections_desc": "Text segments that match existing sources",
+    "common_terms": "Common Academic Terms",
+    "common_terms_desc": "These terms are commonly used in academic literature and don't necessarily indicate plagiarism.",
+    "stats": {
+      "total_words": "Total Words",
+      "similar_words": "Similar Words",
+      "sources_scanned": "Sources Scanned",
+      "scan_time": "Scan Time"
+    },
+    "severity": {
+      "high": "High Priority",
+      "medium": "Medium Priority",
+      "low": "Low Priority"
+    },
+    "labels": {
+      "match": "Match",
+      "similar": "Similar",
+      "overlap": "overlap",
+      "words_matched": "Words Matched",
+      "section_of": "Section {{current}} of {{total}}",
+      "action_required": "Action Required",
+      "very_similar": "Very similar!"
+    },
+    "messages": {
+      "action_required_text": "This section is nearly identical to an existing source. Rewrite or cite properly.",
+      "no_data_banner": "These sources were flagged as similar. Detailed word-level analysis not available for all sources.",
+      "scroll_to_see_all": "Scroll to see all",
+      "view_source": "View source",
+      "view_original_source": "View original source",
+      "no_plagiarism_title": "Excellent! No Plagiarism Detected",
+      "no_plagiarism_desc": "Your text shows high originality. Great work!",
+      "empty_title": "Ready to Check for Plagiarism",
+      "empty_desc": "Paste your text above to get started"
+    },
+    "tips": {
+      "title": "Tips for Researchers",
+      "paraphrase": "Paraphrase properly and add your own analysis",
+      "cite": "Add proper citations for all sources",
+      "quotes": "Use direct quotes sparingly and mark them clearly",
+      "analysis": "Include your own critical analysis and interpretation"
+    },
+    "empty": {
+      "feature1_title": "Internet-Wide Scan",
+      "feature1_desc": "Check against millions of sources online",
+      "feature2_title": "Instant Results",
+      "feature2_desc": "Get detailed plagiarism reports in seconds",
+      "feature3_title": "Source Attribution",
+      "feature3_desc": "See exactly where similar content appears"
+    },
+    "results": {
+      "your_text": "Your Text",
+      "matching_source": "Matching Source",
+      "language_detected": "Language Detected",
+      "processing_time": "Processing Time",
+      "sources_checked": "Sources Checked"
+    }
   },
   "journals": {
     "title": "জার্নাল খোঁজক",

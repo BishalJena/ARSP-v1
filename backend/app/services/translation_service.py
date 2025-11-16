@@ -91,7 +91,10 @@ class TranslationService:
         context: Optional[List[str]] = None,
     ) -> List[str]:
         """
-        Translate multiple texts using Google Translate.
+        Translate multiple texts using Google Translate (smart chunking).
+
+        Chunks texts into batches under 4500 chars each to stay within
+        Google Translate's 5000 character limit while minimizing API calls.
 
         Args:
             texts: List of texts to translate
@@ -105,15 +108,100 @@ class TranslationService:
         if target_language == source_language:
             return texts
 
+        if not texts:
+            return texts
+
         try:
             # Map language codes
             source = self.lang_map.get(source_language, source_language)
             target = self.lang_map.get(target_language, target_language)
 
-            # Translate each text
+            # Use a unique delimiter that won't appear in the text
+            DELIMITER = "\n\n\n"
+            MAX_CHARS = 4500  # Leave buffer below 5000 limit
+
+            # Filter out empty texts and track their positions
+            non_empty_texts = []
+            non_empty_indices = []
+            for i, text in enumerate(texts):
+                if text and text.strip():
+                    non_empty_texts.append(text)
+                    non_empty_indices.append(i)
+
+            if not non_empty_texts:
+                return texts
+
+            # Create chunks that fit within character limit
+            chunks = []
+            current_chunk = []
+            current_length = 0
+
+            for text in non_empty_texts:
+                text_length = len(text) + len(DELIMITER)
+
+                # If adding this text exceeds limit, start new chunk
+                if current_length + text_length > MAX_CHARS and current_chunk:
+                    chunks.append(current_chunk)
+                    current_chunk = [text]
+                    current_length = len(text)
+                else:
+                    current_chunk.append(text)
+                    current_length += text_length
+
+            # Add the last chunk
+            if current_chunk:
+                chunks.append(current_chunk)
+
+            print(f"📝 Translating {len(non_empty_texts)} segments in {len(chunks)} batch(es)...")
+
+            # Translate each chunk
+            translator = GoogleTranslator(source=source, target=target)
+            all_translated = []
+
+            for i, chunk in enumerate(chunks):
+                # Combine chunk texts
+                combined_text = DELIMITER.join(chunk)
+
+                # Translate the chunk
+                try:
+                    translated_combined = translator.translate(combined_text)
+
+                    if not translated_combined:
+                        # If translation fails, use originals
+                        all_translated.extend(chunk)
+                        continue
+
+                    # Split the translated chunk
+                    translated_parts = translated_combined.split(DELIMITER)
+
+                    # Validate split
+                    if len(translated_parts) != len(chunk):
+                        print(f"⚠️  Chunk {i+1} split mismatch: expected {len(chunk)}, got {len(translated_parts)}")
+                        # Use original texts for this chunk
+                        all_translated.extend(chunk)
+                    else:
+                        all_translated.extend(translated_parts)
+
+                except Exception as e:
+                    print(f"⚠️  Chunk {i+1} translation failed: {str(e)}")
+                    # Use original texts for this chunk
+                    all_translated.extend(chunk)
+
+            # Build result list with translated texts in correct positions
+            result = list(texts)  # Copy original list
+            for idx, translated_text in zip(non_empty_indices, all_translated):
+                result[idx] = translated_text
+
+            print(f"✅ Translated {len(non_empty_texts)} segments in {len(chunks)} batch(es)!")
+            return result
+
+        except Exception as e:
+            print(f"❌ Batch translation failed: {str(e)}")
+            print("⚠️  Falling back to individual translation...")
+
+            # Fallback to individual translation
             translated = []
             translator = GoogleTranslator(source=source, target=target)
-
             for text in texts:
                 if not text or text.strip() == "":
                     translated.append(text)
@@ -121,14 +209,10 @@ class TranslationService:
                     try:
                         result = translator.translate(text)
                         translated.append(result if result else text)
-                    except:
+                    except Exception as e:
+                        print(f"⚠️  Individual translation failed: {str(e)}")
                         translated.append(text)
-
             return translated
-
-        except Exception as e:
-            print(f"Batch translation failed: {str(e)}")
-            return texts
 
     async def translate_query(
         self, query: str, target_language: str = "en", source_language: str = "auto"

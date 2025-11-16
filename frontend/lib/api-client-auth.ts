@@ -1,28 +1,26 @@
 /**
- * API Client with Clerk Authentication Integration
+ * API Client with JWT Authentication
  *
  * This is a wrapper around the API client that automatically
- * injects Clerk JWT tokens for authenticated requests.
+ * injects JWT tokens for authenticated requests.
  *
  * Usage:
  *   const client = useAuthenticatedAPI();
  *   const topics = await client.getTrendingTopics();
  */
 
-import { useAuth } from '@clerk/nextjs';
 import { apiClient } from './api-client';
 
 export function useAuthenticatedAPI() {
-  const { getToken } = useAuth();
+  // Token is already set in apiClient by AuthProvider
+  // This hook exists for consistency and future enhancements
 
-  // Create a wrapper that injects the token before each request
   const authenticatedClient = {
     async makeRequest<T>(requestFn: () => Promise<T>): Promise<T> {
       try {
-        // Get Clerk JWT token
-        const token = await getToken();
+        // Get token from localStorage
+        const token = localStorage.getItem('token');
 
-        // Set token in API client
         if (token) {
           apiClient.setToken(token);
         }
@@ -30,9 +28,13 @@ export function useAuthenticatedAPI() {
         // Make the request
         return await requestFn();
       } catch (error) {
-        // Clear token on auth errors
+        // Clear token on 401 errors
         if (error instanceof Error && error.message.includes('401')) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
           apiClient.clearToken();
+          // Optionally redirect to login
+          window.location.href = '/login';
         }
         throw error;
       }
@@ -49,32 +51,41 @@ export function useAuthenticatedAPI() {
       apiClient.getTopicEvolution(data),
 
     // Papers endpoints (auth required)
-    uploadPaper: async (file: File) => {
+    uploadPaper: async (file: File, options?: { language?: string }) => {
       return await authenticatedClient.makeRequest(() => apiClient.uploadPaper(file));
     },
 
-    processPaper: async (paperId: number) => {
-      return await authenticatedClient.makeRequest(() => apiClient.processPaper(paperId));
+    processPaper: async (paperId: number, options?: { language?: string; paper_type?: string }) => {
+      return await authenticatedClient.makeRequest(() => apiClient.processPaper(paperId, options));
     },
 
-    getPaper: async (paperId: number) => {
-      return await authenticatedClient.makeRequest(() => apiClient.getPaper(paperId));
+    getPaper: async (paperId: number, options?: { language?: string }) => {
+      return await authenticatedClient.makeRequest(() => apiClient.getPaper(paperId, options?.language));
     },
 
-    listPapers: async () => {
-      return await authenticatedClient.makeRequest(() => apiClient.listPapers());
+    listPapers: async (options?: { language?: string; limit?: number; offset?: number }) => {
+      return await authenticatedClient.makeRequest(() => apiClient.listPapers(options));
     },
 
     getRelatedPapers: async (paperId: number, limit?: number) => {
       return await authenticatedClient.makeRequest(() => apiClient.getRelatedPapers(paperId, limit));
     },
 
-    deletePaper: async (paperId: number) => {
+    deletePaper: async (paperId: number, options?: { language?: string }) => {
       return await authenticatedClient.makeRequest(() => apiClient.deletePaper(paperId));
     },
 
-    // Plagiarism endpoints (auth required for now, can be made optional)
-    checkPlagiarism: async (data: { text: string; language?: string; check_online?: boolean }) => {
+    // Plagiarism endpoints (auth required)
+    checkPlagiarism: async (data: {
+      text?: string;
+      file_url?: string;
+      website?: string;
+      excluded_sources?: string[];
+      language?: string;
+      country?: string;
+      check_online?: boolean;
+      use_winston?: boolean;
+    }) => {
       return await authenticatedClient.makeRequest(() => apiClient.checkPlagiarism(data));
     },
 

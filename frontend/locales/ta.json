@@ -21,13 +21,42 @@
     "save": "சேமிக்க"
   },
   "dashboard": {
-    "welcome": "ARSP-க்கு வரவேற்கிறோம்",
+    "welcome": "டாஷ்போர்டு",
+    "welcome_default": "டாஷ்போர்டு",
+    "tagline": "உங்கள் ஆராய்ச்சி பயணத்தை துரிதப்படுத்த செயற்கை நுண்ணறிவு சக்தியூட்டப்பட்ட கருவிகளை ஆராயுங்கள்",
     "topics": "தலைப்பு கண்டுபிடிப்பு",
+    "topics_desc": "பிரபலமான ஆராய்ச்சி தலைப்புகளைக் கண்டறிந்து அவற்றின் பரிணாமத்தைக் கண்காணிக்கவும்",
     "papers": "ஆய்வுக்கட்டுரை பகுப்பாய்வு",
+    "papers_desc": "செயற்கை நுண்ணறிவு சக்தியூட்டப்பட்ட நுண்ணறிவுகளுடன் ஆராய்ச்சி ஆய்வுக்கட்டுரைகளை பதிவேற்றி பகுப்பாய்வு செய்யுங்கள்",
     "plagiarism": "கருத்துத் திருட்டு சரிபார்ப்பு",
+    "plagiarism_desc": "மேம்பட்ட தன்னுரிமை மீறல் கண்டறிதலுடன் அசல்தன்மையை உறுதிப்படுத்தவும்",
     "journals": "இதழ் கண்டுபிடிப்பான்",
+    "journals_desc": "உங்கள் ஆராய்ச்சிக்கான தனிப்பயனாக்கப்பட்ட இதழ் பரிந்துரைகளைப் பெறுங்கள்",
     "government": "அரசாங்க இணக்கம்",
-    "impact": "தாக்க முன்னறிவிப்பு"
+    "government_desc": "அரசாங்க முன்னுரிமைகள் மற்றும் நிலையான வளர்ச்சி இலக்குகளுடன் ஆராய்ச்சியை இணைக்கவும்",
+    "impact": "தாக்க முன்னறிவிப்பு",
+    "impact_desc": "உங்கள் ஆராய்ச்சியின் உண்மையான உலக தாக்கத்தை கணிக்கவும்",
+    "stats": {
+      "active_projects": "செயலில் உள்ள திட்டங்கள்",
+      "active_projects_hint": "ஆராய்ச்சி ஆவணத்தைப் பதிவேற்றுவதன் மூலம் தொடங்கவும்",
+      "papers_analyzed": "பகுப்பாய்வு செய்யப்பட்ட ஆய்வுக்கட்டுரைகள்",
+      "papers_analyzed_hint": "எங்கள் செயற்கை நுண்ணறிவு சக்தியூட்டப்பட்ட பகுப்பாய்வு கருவிகளைப் பயன்படுத்தவும்",
+      "plagiarism_checks": "தன்னுரிமை மீறல் சரிபார்ப்புகள்",
+      "plagiarism_checks_hint": "உங்கள் வேலையின் அசல்தன்மையை உறுதிப்படுத்தவும்"
+    },
+    "research_tools": "ஆராய்ச்சி கருவிகள்",
+    "getting_started": {
+      "title": "தொடங்குதல்",
+      "description": "ஸ்மார்ட் ரிசர்ச் ஹப்பை அதிகபட்சமாகப் பயன்படுத்த இந்த படிகளைப் பின்பற்றவும்",
+      "step1_title": "உங்கள் ஆராய்ச்சி ஆவணத்தைப் பதிவேற்றவும்",
+      "step1_desc": "செயற்கை நுண்ணறிவு சக்தியூட்டப்பட்ட பகுப்பாய்விற்காக ஆவணத்தைப் பதிவேற்றுவதன் மூலம் தொடங்கவும்",
+      "step2_title": "தன்னுரிமை மீறலைச் சரிபார்க்கவும்",
+      "step2_desc": "சமர்ப்பிப்பதற்கு முன் அசல்தன்மையை உறுதிப்படுத்தவும்",
+      "step3_title": "சரியான இதழைக் கண்டறியவும்",
+      "step3_desc": "தனிப்பயனாக்கப்பட்ட இதழ் பரிந்துரைகளைப் பெறுங்கள்",
+      "step4_title": "ஆராய்ச்சி தாக்கத்தை கணிக்கவும்",
+      "step4_desc": "உங்கள் வேலையின் சாத்தியமான தாக்கத்தைப் புரிந்துகொள்ளுங்கள்"
+    }
   },
   "topics": {
     "title": "தலைப்பு கண்டுபிடிப்பு",
@@ -70,18 +99,79 @@
     "title": "தன்னுரிமை மீறல் சரிபார்ப்பு",
     "description": "மேம்பட்ட செயற்கை நுண்ணறிவு சக்தியூட்டப்பட்ட தன்னுரிமை மீறல் கண்டறிதலுடன் அசல்தன்மையை உறுதிப்படுத்தவும்",
     "check_title": "உங்கள் உரையைச் சரிபார்க்கவும்",
-    "check_description": "தன்னுரிமை மீறலைச் சரிபார்க்கவும் அசல்தன்மை மதிப்பெண்ணைப் பெறவும் உங்கள் உரையை கீழே ஒட்டவும்",
-    "text_placeholder": "உங்கள் உரையை இங்கே உள்ளிடவும்...",
+    "check_description": "கீழே உங்கள் சுருக்கத்தை அல்லது ஆராய்ச்சி உரையை ஒட்டி, தனித்துவ மதிப்பெண்ணுடன் கூடிய கருத்துத் திருட்டு சோதனையைப் பெறுங்கள்",
+    "text_placeholder": "உங்கள் ஆராய்ச்சி சுருக்கத்தை அல்லது உரையை இங்கே ஒட்டவும் (குறைந்தபட்சம் 100 எழுத்துகள்)...",
     "button_check": "தன்னுரிமை மீறலைச் சரிபார்க்கவும்",
-    "checking": "சரிபார்க்கிறது...",
+    "checking": "உங்கள் உரையை ஆய்வு செய்கிறது...",
     "originality_score": "அசல்தன்மை மதிப்பெண்",
-    "plagiarism_level_high": "உயர் அசல்தன்மை",
-    "plagiarism_level_medium": "நடுத்தர அசல்தன்மை",
-    "plagiarism_level_low": "குறைந்த அசல்தன்மை",
+    "plagiarism_score": "Plagiarism Score",
+    "plagiarism_level_high": "சிறப்பானது",
+    "plagiarism_level_medium": "நல்லது",
+    "plagiarism_level_low": "மீள்பார்வை தேவை",
     "similar_sources": "ஒத்த மூலங்கள்",
+    "source_breakdown": "Source Breakdown",
+    "source_breakdown_desc": "Papers with overlapping content",
+    "similar_sources_desc": "Sources where similar content was found",
     "similarity": "ஒற்றுமை",
     "matched_text": "பொருந்திய உரை",
-    "confidence": "நம்பகத்தன்மை"
+    "confidence": "நம்பகத்தன்மை",
+    "flagged_sections": "Flagged Sections",
+    "flagged_sections_desc": "Text segments that match existing sources",
+    "common_terms": "Common Academic Terms",
+    "common_terms_desc": "These terms are commonly used in academic literature and don't necessarily indicate plagiarism.",
+    "stats": {
+      "total_words": "Total Words",
+      "similar_words": "Similar Words",
+      "sources_scanned": "Sources Scanned",
+      "scan_time": "Scan Time"
+    },
+    "severity": {
+      "high": "High Priority",
+      "medium": "Medium Priority",
+      "low": "Low Priority"
+    },
+    "labels": {
+      "match": "Match",
+      "similar": "Similar",
+      "overlap": "overlap",
+      "words_matched": "Words Matched",
+      "section_of": "Section {{current}} of {{total}}",
+      "action_required": "Action Required",
+      "very_similar": "Very similar!"
+    },
+    "messages": {
+      "action_required_text": "This section is nearly identical to an existing source. Rewrite or cite properly.",
+      "no_data_banner": "These sources were flagged as similar. Detailed word-level analysis not available for all sources.",
+      "scroll_to_see_all": "Scroll to see all",
+      "view_source": "View source",
+      "view_original_source": "View original source",
+      "no_plagiarism_title": "Excellent! No Plagiarism Detected",
+      "no_plagiarism_desc": "Your text shows high originality. Great work!",
+      "empty_title": "Ready to Check for Plagiarism",
+      "empty_desc": "Paste your text above to get started"
+    },
+    "tips": {
+      "title": "Tips for Researchers",
+      "paraphrase": "Paraphrase properly and add your own analysis",
+      "cite": "Add proper citations for all sources",
+      "quotes": "Use direct quotes sparingly and mark them clearly",
+      "analysis": "Include your own critical analysis and interpretation"
+    },
+    "empty": {
+      "feature1_title": "Internet-Wide Scan",
+      "feature1_desc": "Check against millions of sources online",
+      "feature2_title": "Instant Results",
+      "feature2_desc": "Get detailed plagiarism reports in seconds",
+      "feature3_title": "Source Attribution",
+      "feature3_desc": "See exactly where similar content appears"
+    },
+    "results": {
+      "your_text": "Your Text",
+      "matching_source": "Matching Source",
+      "language_detected": "Language Detected",
+      "processing_time": "Processing Time",
+      "sources_checked": "Sources Checked"
+    }
   },
   "journals": {
     "title": "இதழ் கண்டுபிடிப்பான்",

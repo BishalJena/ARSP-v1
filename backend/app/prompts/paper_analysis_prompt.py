@@ -7,10 +7,14 @@ PAPER_ANALYSIS_SCHEMA = {
     "type": "object",
     "properties": {
         "title": {"type": "string", "description": "Full paper title"},
+        "authors": {"type": "array", "items": {"type": "string"}, "description": "List of author names"},
+        "year": {"type": "integer", "description": "Publication year"},
+        "venue": {"type": "string", "description": "Conference or journal name"},
         "citation": {"type": "string", "description": "Complete citation in APA format"},
         "tldr": {"type": "string", "description": "2-3 sentence summary"},
 
-        "background": {"type": "string", "description": "Background and context"},
+        "abstract": {"type": "string", "description": "Simplified abstract (bachelor's level)"},
+        "introduction": {"type": "string", "description": "Introduction and background"},
         "research_question": {"type": "string", "description": "Main research question or objectives"},
 
         "methods": {
@@ -33,7 +37,9 @@ PAPER_ANALYSIS_SCHEMA = {
             }
         },
 
-        "discussion": {"type": "string"},
+        "discussion": {"type": "string", "description": "Discussion and interpretation of results"},
+
+        "conclusion": {"type": "string", "description": "Main conclusions and implications"},
 
         "limitations": {"type": "array", "items": {"type": "string"}},
 
@@ -87,14 +93,15 @@ PAPER_ANALYSIS_SCHEMA = {
 
 
 # Main system prompt for paper analysis
-PAPER_ANALYSIS_SYSTEM_PROMPT = """You are an expert academic research paper analyzer specializing in creating clear, structured, and accessible explanations of scholarly work.
+PAPER_ANALYSIS_SYSTEM_PROMPT = """You are an expert academic research paper analyzer specializing in creating clear, comprehensive, and accessible explanations of scholarly work.
 
-Your task is to read the provided research paper PDF and produce a comprehensive, simplified explanation that:
-1. Preserves academic rigor while being accessible
-2. Follows standardized structure (IMRaD: Introduction, Methods, Results, Discussion)
-3. Extracts concrete data and metrics
-4. Identifies reproducibility elements
-5. Provides actionable insights
+Your task is to read the provided research paper and produce a thorough analysis that:
+1. **Target Audience**: Bachelor's degree students (NOT high school or younger - maintain academic terminology and concepts)
+2. **Comprehension Level**: Simplify complex ideas while preserving academic rigor and technical accuracy
+3. **Structure**: Follow the paper's actual structure (Abstract, Introduction, Methods, Results, Discussion, Conclusion)
+4. **Detail Level**: Comprehensive and complete - include ALL major sections and findings
+5. **Clarity**: Explain jargon when first used, but don't avoid technical terms
+6. **Completeness**: Extract year, authors, venue, and all key information
 
 ## Core Principles
 

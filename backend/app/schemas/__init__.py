@@ -1,6 +1,6 @@
 """Pydantic schemas for request/response validation."""
 from .topics import TopicQuery, TopicResponse, TopicListResponse
-from .papers import PaperUploadResponse, PaperProcessRequest, LiteratureReviewResponse
+# Legacy paper schemas removed - using papers_v2 schemas with Gemini instead
 from .plagiarism import PlagiarismCheckRequest, PlagiarismCheckResponse
 from .journals import JournalRecommendRequest, JournalResponse, JournalListResponse
 
@@ -8,9 +8,6 @@ __all__ = [
     "TopicQuery",
     "TopicResponse",
     "TopicListResponse",
-    "PaperUploadResponse",
-    "PaperProcessRequest",
-    "LiteratureReviewResponse",
     "PlagiarismCheckRequest",
     "PlagiarismCheckResponse",
     "JournalRecommendRequest",

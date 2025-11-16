@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useUser, useAuth as useClerkAuth, useSignUp, useSignIn } from '@clerk/nextjs';
+import { apiClient } from './api-client';
 
 interface User {
   id: string;
@@ -25,106 +25,134 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (data: RegisterData) => Promise<void>;
   isAuthenticated: boolean;
+  token: string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { user: clerkUser, isLoaded } = useUser();
-  const { signOut } = useClerkAuth();
-  const { signUp, setActive: setActiveSignUp } = useSignUp();
-  const { signIn, setActive: setActiveSignIn } = useSignIn();
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState<string | null>(null);
 
+  // Load user from localStorage on mount
   useEffect(() => {
-    if (isLoaded && clerkUser) {
-      // Map Clerk user to our User interface
-      setUser({
-        id: clerkUser.id,
-        email: clerkUser.primaryEmailAddress?.emailAddress || '',
-        full_name: clerkUser.fullName || clerkUser.firstName || 'User',
-        role: clerkUser.publicMetadata?.role as string || undefined,
-        institution: clerkUser.publicMetadata?.institution as string || undefined,
-        research_interests: clerkUser.publicMetadata?.research_interests as string[] || undefined,
-      });
-    } else if (isLoaded && !clerkUser) {
-      setUser(null);
-    }
-  }, [clerkUser, isLoaded]);
+    const loadUser = async () => {
+      try {
+        const storedToken = localStorage.getItem('token');
+        const storedUser = localStorage.getItem('user');
+
+        if (storedToken && storedUser) {
+          setToken(storedToken);
+          setUser(JSON.parse(storedUser));
+          apiClient.setToken(storedToken);
+        }
+      } catch (error) {
+        console.error('Failed to load user from localStorage:', error);
+        // Clear invalid data
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadUser();
+  }, []);
 
   const login = async (email: string, password: string) => {
-    if (!signIn) {
-      throw new Error('Sign in is not available');
-    }
-
     try {
-      const result = await signIn.create({
-        identifier: email,
-        password,
+      const response = await fetch(`${apiClient.baseURL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
       });
 
-      if (result.status === 'complete') {
-        await setActiveSignIn({ session: result.createdSessionId });
-      } else {
-        throw new Error('Sign in incomplete. Please try again.');
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || 'Login failed');
       }
+
+      const data = await response.json();
+
+      // Store token and user
+      localStorage.setItem('token', data.access_token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+
+      setToken(data.access_token);
+      setUser(data.user);
+      apiClient.setToken(data.access_token);
     } catch (error: any) {
       console.error('Login error:', error);
-      throw new Error(error.errors?.[0]?.message || error.message || 'Login failed');
+      throw new Error(error.message || 'Login failed');
     }
   };
 
   const register = async (data: RegisterData) => {
-    if (!signUp) {
-      throw new Error('Sign up is not available');
-    }
-
     try {
-      // Split full name into first and last name
-      const nameParts = data.full_name.trim().split(' ');
-      const firstName = nameParts[0];
-      const lastName = nameParts.slice(1).join(' ') || '';
-
-      // Create the sign-up
-      const result = await signUp.create({
-        emailAddress: data.email,
-        password: data.password,
-        firstName,
-        lastName,
+      const response = await fetch(`${apiClient.baseURL}/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
       });
 
-      // If email verification is not required, set the session active
-      if (result.status === 'complete') {
-        await setActiveSignUp({ session: result.createdSessionId });
-      } else if (result.status === 'missing_requirements') {
-        // Email verification required - prepare email verification
-        await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
-        // Return success - the UI should handle showing verification input
-        return;
-      } else {
-        // Handle email verification if required
-        throw new Error('Registration initiated. Please check your email for verification code.');
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || 'Registration failed');
       }
+
+      const result = await response.json();
+
+      // Store token and user
+      localStorage.setItem('token', result.access_token);
+      localStorage.setItem('user', JSON.stringify(result.user));
+
+      setToken(result.access_token);
+      setUser(result.user);
+      apiClient.setToken(result.access_token);
     } catch (error: any) {
       console.error('Registration error:', error);
-      throw new Error(error.errors?.[0]?.message || error.message || 'Registration failed');
+      throw new Error(error.message || 'Registration failed');
     }
   };
 
   const logout = async () => {
-    await signOut();
-    setUser(null);
+    try {
+      // Call logout endpoint (optional - just for logging)
+      if (token) {
+        await fetch(`${apiClient.baseURL}/auth/logout`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }).catch(() => {
+          // Ignore errors - logout should always succeed client-side
+        });
+      }
+    } finally {
+      // Clear local state
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      setToken(null);
+      setUser(null);
+      apiClient.clearToken();
+    }
   };
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        loading: !isLoaded,
+        loading,
         logout,
         login,
         register,
-        isAuthenticated: !!user,
+        isAuthenticated: !!user && !!token,
+        token,
       }}
     >
       {children}

@@ -116,7 +116,7 @@ class APIClient {
       headers['Authorization'] = `Bearer ${this.token}`;
     }
 
-    const response = await fetch(`${this.baseURL}/papers/upload`, {
+    const response = await fetch(`${this.baseURL}/papers-enhanced/upload`, {
       method: 'POST',
       headers,
       body: formData,
@@ -129,18 +129,31 @@ class APIClient {
     return response.json();
   }
 
-  async processPaper(paperId: number) {
-    return this.request(`/papers/${paperId}/process`, {
+  async processPaper(paperId: number, options?: { language?: string; paper_type?: string }) {
+    const params = new URLSearchParams();
+    if (options?.language) params.append('language', options.language);
+    if (options?.paper_type) params.append('paper_type', options.paper_type);
+
+    const queryString = params.toString();
+    const url = `/papers-enhanced/${paperId}/process${queryString ? `?${queryString}` : ''}`;
+
+    return this.request(url, {
       method: 'POST',
     });
   }
 
-  async getPaper(paperId: number) {
-    return this.request(`/papers/${paperId}`);
+  async getPaper(paperId: number, language?: string) {
+    const queryString = language ? `?language=${language}` : '';
+    return this.request(`/papers-enhanced/${paperId}${queryString}`);
   }
 
-  async listPapers() {
-    return this.request('/papers/');
+  async listPapers(options?: { limit?: number; offset?: number }) {
+    const params = new URLSearchParams();
+    if (options?.limit) params.append('limit', options.limit.toString());
+    if (options?.offset) params.append('offset', options.offset.toString());
+
+    const queryString = params.toString();
+    return this.request(`/papers-enhanced/${queryString ? `?${queryString}` : ''}`);
   }
 
   async getRelatedPapers(paperId: number, limit: number = 10) {
@@ -148,16 +161,21 @@ class APIClient {
   }
 
   async deletePaper(paperId: number) {
-    return this.request(`/papers/${paperId}`, {
+    return this.request(`/papers-enhanced/${paperId}`, {
       method: 'DELETE',
     });
   }
 
   // ============ PLAGIARISM ENDPOINTS ============
   async checkPlagiarism(data: {
-    text: string;
+    text?: string;
+    file_url?: string;
+    website?: string;
+    excluded_sources?: string[];
     language?: string;
+    country?: string;
     check_online?: boolean;
+    use_winston?: boolean;
   }) {
     return this.request('/plagiarism/check', {
       method: 'POST',

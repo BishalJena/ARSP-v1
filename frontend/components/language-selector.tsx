@@ -53,7 +53,7 @@ export function LanguageSelector() {
         <DropdownMenuLabel className="text-xs text-muted-foreground font-normal px-2">
           International Languages
         </DropdownMenuLabel>
-        {['en', 'zh', 'es', 'fr', 'ar', 'ru', 'pt', 'de'].map((loc) => (
+        {['en', 'zh', 'es', 'fr', 'pt', 'de', 'ja', 'ko'].map((loc) => (
           <DropdownMenuItem
             key={loc}
             onClick={() => setLocale(loc)}

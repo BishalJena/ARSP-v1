@@ -1,226 +1,187 @@
-# ARSP-v1 Deployment Guide
+# ARSP Deployment Guide
 
-Complete step-by-step guide to deploy your ARSP (AI-Enabled Research Support Platform) to production.
-
----
-
-## ⚠️ CRITICAL: Localhost Problem Explained
-
-**The Problem:** If you deploy without proper setup, your frontend will try to call `http://localhost:8000` from users' browsers (which fails).
-
-**The Solution:** Environment variables! Your code uses `process.env.NEXT_PUBLIC_API_URL` which:
-- **Development**: Uses `localhost:8000`
-- **Production**: Uses your deployed backend URL (set in Vercel)
-
-**The Fix (Simple):**
-1. Deploy backend first → Copy URL (`https://arsp-backend-xyz.onrender.com`)
-2. In Vercel, set `NEXT_PUBLIC_API_URL=https://arsp-backend-xyz.onrender.com/api/v1`
-3. Deploy frontend → It will call production backend, not localhost ✅
+Complete guide to deploy ARSP (AI-Enabled Research Support Platform) to production with Vercel (frontend) and Render (backend).
 
 ---
 
-## 📝 Deployment Order (FOLLOW THIS!)
+## 📋 Quick Start
 
-```
-Step 1: Deploy Backend → https://backend.onrender.com
-Step 2: Copy that URL
-Step 3: Set NEXT_PUBLIC_API_URL in Vercel = backend URL + /api/v1
-Step 4: Deploy Frontend → https://arsp.vercel.app
-Step 5: Update Backend CORS to allow frontend URL
-✅ Done!
+```bash
+# 1. Deploy Backend (Render) → Get URL
+# 2. Deploy Frontend (Vercel) → Set NEXT_PUBLIC_API_URL to backend URL
+# 3. Update Backend CORS_ORIGINS with frontend URL
+# ✅ Done!
 ```
 
 ---
 
-## 🎯 Deployment Overview
+## 🎯 Deployment Architecture
 
-**Stack:**
-- **Frontend**: Next.js 16 (React 19) → Deploy to **Vercel**
-- **Backend**: FastAPI (Python) → Deploy to **Render** or **Railway**
-- **Database**: Supabase (already set up)
-- **Authentication**: Clerk (already configured)
+- **Frontend**: Next.js 16 (React 19) → **Vercel**
+- **Backend**: FastAPI (Python) → **Render**
+- **Database**: Supabase (PostgreSQL)
+- **Authentication**: Email/Password + JWT (Self-contained)
 
 ---
 
-## 📋 Pre-Deployment Checklist
+## 📦 Pre-Deployment Checklist
 
-### 1. Verify Your Services Are Ready
+### Required Services
 
-- [x] **Supabase**: Already configured (`rvhngxjkkikzsawplagw.supabase.co`)
-- [x] **Clerk**: Already configured
+- [x] **Supabase**: Database already configured
 - [ ] **Hugging Face API Key**: Get from https://huggingface.co/settings/tokens
-- [ ] **Lingo.dev API Key**: Already have (`api_cevh9pmp5jfz4gjpr8poj1ap`)
+- [ ] **OpenRouter API Key**: For Gemini AI integration
+- [ ] **Winston AI API Key**: For plagiarism detection
+- [ ] **Lingo.dev API Key**: For translations (optional)
+
+### Required Migrations
+
+- [ ] Run `backend/migrations/create_users_table.sql` in Supabase SQL Editor
+- [ ] Verify users table exists with password_hash column
 
 ---
 
-## 🚀 Part 1: Deploy Backend (FastAPI)
+## 🚀 Part 1: Deploy Backend to Render
 
-### Option A: Deploy to Render (Recommended - Free Tier Available)
+### Step 1: Prepare Backend
 
-#### Step 1: Prepare Backend for Deployment
+The `render.yaml` file is already in the root directory with all necessary configuration.
 
-1. **Create `render.yaml` in backend folder:**
+### Step 2: Deploy to Render
 
-```bash
-cd backend
-```
+1. **Sign Up/Login** to https://render.com
+2. Click **"New +"** → **"Blueprint"**
+3. **Connect GitHub** repository
+4. Select **"ARSP-v1"** repository
+5. Render will detect `render.yaml` automatically
+6. Click **"Apply Blueprint"**
 
-Create file `render.yaml`:
-```yaml
-services:
-  - type: web
-    name: arsp-backend
-    env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
-    envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.0
-      - key: ENVIRONMENT
-        value: production
-      - key: SUPABASE_URL
-        sync: false
-      - key: SUPABASE_KEY
-        sync: false
-      - key: SUPABASE_SERVICE_KEY
-        sync: false
-      - key: CLERK_SECRET_KEY
-        sync: false
-      - key: HF_API_KEY
-        sync: false
-      - key: LINGO_API_KEY
-        sync: false
-```
+### Step 3: Configure Environment Variables
 
-#### Step 2: Deploy to Render
+In Render dashboard, add these environment variables:
 
-1. Go to https://render.com and sign up/login
-2. Click **"New +"** → **"Web Service"**
-3. Connect your GitHub repository
-4. Select the `ARSP-v1` repository
-5. Configure:
-   - **Name**: `arsp-backend`
-   - **Root Directory**: `backend`
-   - **Environment**: `Python 3`
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-   - **Instance Type**: Free (or paid for better performance)
-
-6. **Add Environment Variables** (click "Advanced" → "Add Environment Variable"):
-   ```
-   ENVIRONMENT=production
-   SUPABASE_URL=https://rvhngxjkkikzsawplagw.supabase.co
-   SUPABASE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ2aG5neGpra2lrenNhd3BsYWd3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxMjg0NjYsImV4cCI6MjA3ODcwNDQ2Nn0.eqYflu69T5Ywo4UJzrp4e3SBq1tWZs5IA1BDHYyJAmI
-   SUPABASE_SERVICE_KEY=<get from Supabase dashboard>
-   CLERK_SECRET_KEY=sk_test_C3eCN9MiuOymS1CKdeFNaaIB6Qy6Mb4aavA0uzAR1S
-   HF_API_KEY=<your-huggingface-api-key>
-   LINGO_API_KEY=api_cevh9pmp5jfz4gjpr8poj1ap
-   HOST=0.0.0.0
-   PORT=10000
-   DEBUG=False
-   CORS_ORIGINS=https://your-frontend-domain.vercel.app
-   ```
-
-7. Click **"Create Web Service"**
-8. Wait for deployment (5-10 minutes first time)
-9. **Note your backend URL**: `https://arsp-backend.onrender.com`
-
----
-
-### Option B: Deploy to Railway (Alternative)
-
-1. Go to https://railway.app and sign up/login
-2. Click **"New Project"** → **"Deploy from GitHub repo"**
-3. Select your repository
-4. Railway will auto-detect Python
-5. Add environment variables (same as Render above)
-6. Set start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-7. Deploy and note your URL
-
----
-
-## 🎨 Part 2: Deploy Frontend (Next.js)
-
-### Deploy to Vercel (Recommended - Made by Next.js creators)
-
-#### Step 1: Prepare Frontend
-
-1. **Update API URL for production** - Create `frontend/.env.production`:
-
-```bash
-cd frontend
-```
-
-Create `.env.production` file:
 ```env
-# Backend API URL (update with your Render/Railway URL)
-NEXT_PUBLIC_API_URL=https://arsp-backend.onrender.com/api/v1
+# Environment
+ENVIRONMENT=production
 
-# Supabase
+# Supabase Database
+SUPABASE_URL=https://rvhngxjkkikzsawplagw.supabase.co
+SUPABASE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ2aG5neGpra2lrenNhd3BsYWd3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxMjg0NjYsImV4cCI6MjA3ODcwNDQ2Nn0.eqYflu69T5Ywo4UJzrp4e3SBq1tWZs5IA1BDHYyJAmI
+SUPABASE_SERVICE_KEY=<get-from-supabase-dashboard>
+SUPABASE_DB_PASS=<your-db-password>
+
+# JWT Authentication (Render auto-generates JWT_SECRET_KEY)
+JWT_ALGORITHM=HS256
+
+# API Keys
+OPENROUTER_API_KEY=<your-openrouter-api-key>
+WINSTON_API_KEY=<your-winston-api-key>
+HF_API_KEY=<your-huggingface-api-key>
+SEMANTIC_SCHOLAR_API_KEY=<your-semantic-scholar-key>
+LINGO_API_KEY=<your-lingo-api-key>
+
+# CORS (Update after deploying frontend)
+CORS_ORIGINS=https://your-frontend.vercel.app
+
+# Server Configuration
+HOST=0.0.0.0
+PORT=10000
+DEBUG=False
+```
+
+### Step 4: Deploy and Get URL
+
+1. Click **"Deploy"**
+2. Wait 5-10 minutes for first deployment
+3. **Copy your backend URL**: `https://arsp-backend-xyz.onrender.com`
+
+**Important:** Save this URL - you'll need it for frontend deployment!
+
+---
+
+## 🎨 Part 2: Deploy Frontend to Vercel
+
+### Step 1: Prepare Frontend
+
+1. **Update `.env.production.example`** (if needed):
+
+```env
+NEXT_PUBLIC_API_URL=https://your-backend.onrender.com/api/v1
 NEXT_PUBLIC_SUPABASE_URL=https://rvhngxjkkikzsawplagw.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ2aG5neGpra2lrenNhd3BsYWd3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxMjg0NjYsImV4cCI6MjA3ODcwNDQ2Nn0.eqYflu69T5Ywo4UJzrp4e3SBq1tWZs5IA1BDHYyJAmI
-
-# Clerk Authentication
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_aG9seS1odXNreS05Mi5jbGVyay5hY2NvdW50cy5kZXYk
-CLERK_SECRET_KEY=sk_test_C3eCN9MiuOymS1CKdeFNaaIB6Qy6Mb4aavA0uzAR1S
-
-# Lingo.dev
-NEXT_PUBLIC_LINGO_API_KEY=api_cevh9pmp5jfz4gjpr8poj1ap
+NEXT_PUBLIC_LINGO_API_KEY=<your-lingo-api-key>
 ```
 
-#### Step 2: Deploy to Vercel
+### Step 2: Deploy to Vercel
 
 1. Go to https://vercel.com and sign up/login with GitHub
 2. Click **"Add New..."** → **"Project"**
-3. Import your `ARSP-v1` repository
+3. Import **"ARSP-v1"** repository
 4. Configure:
    - **Framework Preset**: Next.js (auto-detected)
    - **Root Directory**: `frontend`
    - **Build Command**: `npm run build` (auto-filled)
    - **Output Directory**: `.next` (auto-filled)
 
-5. **Add Environment Variables**:
-   - Click "Environment Variables"
-   - Add all variables from `.env.production` above
-   - Make sure to add them for **Production**, **Preview**, and **Development**
+### Step 3: Add Environment Variables
 
-6. Click **"Deploy"**
-7. Wait 2-5 minutes
-8. **Note your frontend URL**: `https://arsp-v1.vercel.app` (or custom domain)
+Click **"Environment Variables"** and add:
 
-#### Step 3: Update CORS in Backend
+```env
+NEXT_PUBLIC_API_URL=https://arsp-backend-xyz.onrender.com/api/v1
+NEXT_PUBLIC_SUPABASE_URL=https://rvhngxjkkikzsawplagw.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+NEXT_PUBLIC_LINGO_API_KEY=api_cevh9pmp5jfz4gjpr8poj1ap
+```
 
-1. Go back to Render/Railway backend settings
-2. Update `CORS_ORIGINS` environment variable:
-   ```
-   CORS_ORIGINS=https://arsp-v1.vercel.app,https://arsp-v1-*.vercel.app
-   ```
-3. Redeploy backend
+**Important:** Add for Production, Preview, and Development environments.
+
+### Step 4: Deploy
+
+1. Click **"Deploy"**
+2. Wait 2-5 minutes
+3. **Copy your frontend URL**: `https://arsp-v1.vercel.app`
 
 ---
 
-## 🔧 Part 3: Configure Clerk for Production
+## 🔧 Part 3: Update CORS in Backend
 
-1. Go to https://dashboard.clerk.com
-2. Select your application
-3. Go to **"Domains"** in sidebar
-4. Add your production domain: `arsp-v1.vercel.app`
-5. Update **Redirect URLs**:
-   - Add: `https://arsp-v1.vercel.app/dashboard`
-   - Add: `https://arsp-v1.vercel.app/login`
+1. Go back to **Render dashboard**
+2. Find your backend service
+3. Go to **Environment** tab
+4. Update `CORS_ORIGINS`:
+
+```env
+CORS_ORIGINS=https://arsp-v1.vercel.app,https://arsp-v1-*.vercel.app
+```
+
+5. Save and **redeploy** backend
 
 ---
 
 ## 🗄️ Part 4: Verify Supabase Configuration
 
+### Database Migration
+
 1. Go to https://supabase.com/dashboard
-2. Select your project
-3. Go to **Settings** → **API**
-4. Verify:
-   - Project URL matches your env vars
+2. Select your project: `rvhngxjkkikzsawplagw`
+3. Go to **SQL Editor**
+4. Run the migration from `backend/migrations/create_users_table.sql`
+5. Verify users table was created successfully
+
+### API Configuration
+
+1. Go to **Settings** → **API**
+2. Verify:
+   - Project URL matches environment variables
    - Anon key is correct
-5. Go to **Authentication** → **URL Configuration**
-6. Add your Vercel URL to **Redirect URLs**:
+   - Service role key is saved
+
+### URL Configuration
+
+1. Go to **Authentication** → **URL Configuration**
+2. Add Site URL: `https://arsp-v1.vercel.app`
+3. Add Redirect URLs:
    - `https://arsp-v1.vercel.app/**`
 
 ---
@@ -229,19 +190,37 @@ NEXT_PUBLIC_LINGO_API_KEY=api_cevh9pmp5jfz4gjpr8poj1ap
 
 ### Test Backend
 
-1. Visit: `https://arsp-backend.onrender.com/docs`
-2. You should see FastAPI Swagger documentation
-3. Test the `/health` endpoint
+1. **Visit API Documentation**:
+   ```
+   https://arsp-backend-xyz.onrender.com/docs
+   ```
+
+2. **Test Health Endpoint**:
+   ```bash
+   curl https://arsp-backend-xyz.onrender.com/api/v1/health
+   ```
+   Expected: `{"status": "healthy"}`
+
+3. **Test Registration**:
+   ```bash
+   curl -X POST https://arsp-backend-xyz.onrender.com/api/v1/auth/register \
+     -H "Content-Type: application/json" \
+     -d '{"email": "test@example.com", "password": "password123", "full_name": "Test User"}'
+   ```
+   Expected: JWT token and user object
 
 ### Test Frontend
 
-1. Visit: `https://arsp-v1.vercel.app`
-2. Try to register/login
-3. Test each feature:
-   - Topic Discovery
-   - Paper Analysis
-   - Plagiarism Check
-   - Journal Finder
+1. **Visit**: `https://arsp-v1.vercel.app`
+2. **Test Authentication**:
+   - Register new account
+   - Login with credentials
+   - Access dashboard
+3. **Test Features**:
+   - Paper upload and analysis
+   - Plagiarism detection
+   - Journal recommendations
+   - Multi-language translation
 
 ---
 
@@ -249,98 +228,243 @@ NEXT_PUBLIC_LINGO_API_KEY=api_cevh9pmp5jfz4gjpr8poj1ap
 
 ### Backend Issues
 
-**Problem**: Backend won't start
-- Check logs in Render/Railway dashboard
-- Verify all environment variables are set
-- Check Python version is 3.11+
+**Problem: Backend won't start**
+```bash
+# Check Render logs
+# Verify Python version is 3.9+
+# Verify all environment variables are set
+```
 
-**Problem**: CORS errors
-- Update `CORS_ORIGINS` to include your Vercel URL
-- Redeploy backend
+**Problem: CORS errors**
+```bash
+# Solution:
+1. Update CORS_ORIGINS in Render
+2. Include both production and preview URLs
+3. Redeploy backend
+```
 
-**Problem**: Database connection fails
-- Verify Supabase credentials
-- Check if Supabase project is active
+**Problem: Database connection fails**
+```bash
+# Verify:
+- Supabase credentials are correct
+- Users table exists
+- Row Level Security policies allow access
+```
+
+**Problem: bcrypt/passlib errors**
+```bash
+# Solution:
+1. Verify bcrypt==4.0.1 is in requirements.txt
+2. Clear build cache in Render
+3. Redeploy
+```
 
 ### Frontend Issues
 
-**Problem**: API calls fail
-- Check `NEXT_PUBLIC_API_URL` points to correct backend
-- Verify backend is running
-- Check browser console for errors
+**Problem: API calls fail (localhost error)**
+```bash
+# Solution:
+1. Verify NEXT_PUBLIC_API_URL is set in Vercel
+2. Must include /api/v1 suffix
+3. Redeploy frontend
+```
 
-**Problem**: Authentication fails
-- Verify Clerk keys are correct
-- Check Clerk dashboard for domain configuration
-- Ensure redirect URLs are set
+**Problem: Authentication fails**
+```bash
+# Check:
+- Backend /auth/register endpoint works
+- JWT_SECRET_KEY is set in backend
+- Users table exists in Supabase
+```
 
-**Problem**: Build fails
-- Check Node.js version (should be 18+)
-- Run `npm install` locally to verify dependencies
-- Check Vercel build logs
+**Problem: Build fails**
+```bash
+# Verify:
+- Node.js version is 18+ (set in Vercel)
+- All dependencies are in package.json
+- Check Vercel build logs for specific error
+```
+
+**Problem: Environment variables not working**
+```bash
+# Solution:
+1. All frontend env vars must start with NEXT_PUBLIC_
+2. Must be set in Vercel dashboard
+3. Redeploy after adding variables
+```
 
 ---
 
 ## 🔐 Security Checklist
 
-- [ ] All API keys are in environment variables (not in code)
+- [ ] All API keys in environment variables (not in code)
 - [ ] `.env` files are in `.gitignore`
+- [ ] JWT_SECRET_KEY is randomly generated (Render does this)
 - [ ] Supabase Row Level Security (RLS) is enabled
-- [ ] Backend has rate limiting (consider adding)
+- [ ] CORS is properly configured with specific domains
 - [ ] HTTPS is enabled (automatic on Vercel/Render)
-- [ ] CORS is properly configured
+- [ ] Database password is strong and secure
+- [ ] No secrets committed to git
 
 ---
 
 ## 💰 Cost Estimate
 
-**Free Tier (Good for testing/MVP):**
-- Vercel: Free (Hobby plan)
-- Render: Free (with sleep after inactivity)
-- Supabase: Free (500MB database, 2GB bandwidth)
-- Clerk: Free (10,000 MAU)
-- Total: **$0/month**
+### Free Tier (Development/Testing)
+- **Vercel**: Free (Hobby plan)
+- **Render**: Free (sleeps after 15min inactivity)
+- **Supabase**: Free (500MB database, 2GB bandwidth)
+- **Total**: **$0/month**
 
-**Production Tier (Recommended for real users):**
-- Vercel Pro: $20/month
-- Render Starter: $7/month
-- Supabase Pro: $25/month
-- Clerk Pro: $25/month
-- Total: **~$77/month**
+### Production Tier (Recommended)
+- **Vercel Pro**: $20/month (better performance, analytics)
+- **Render Starter**: $7/month (always on, faster)
+- **Supabase Pro**: $25/month (8GB database, better support)
+- **Total**: **~$52/month**
 
 ---
 
-## 🚀 Quick Deploy Commands
+## 🚀 Continuous Deployment
+
+Both Vercel and Render support auto-deployment:
 
 ```bash
-# Commit all changes
+# Make changes and commit
 git add .
-git commit -m "Prepare for deployment"
+git commit -m "Update feature"
 git push origin main
 
-# Backend will auto-deploy on Render/Railway
-# Frontend will auto-deploy on Vercel
+# Backend auto-deploys on Render
+# Frontend auto-deploys on Vercel
+# ✅ Done!
 ```
 
 ---
 
-## 📝 Next Steps After Deployment
+## 📝 Environment Variables Reference
 
-1. **Set up monitoring**: Add error tracking (Sentry)
-2. **Configure analytics**: Add Google Analytics or Plausible
-3. **Set up custom domain**: Buy domain and configure in Vercel
-4. **Enable caching**: Configure Redis for better performance
-5. **Add CI/CD**: Set up automated testing before deployment
+### Backend (Render)
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `ENVIRONMENT` | production | ✅ |
+| `SUPABASE_URL` | Supabase project URL | ✅ |
+| `SUPABASE_KEY` | Supabase anon key | ✅ |
+| `SUPABASE_SERVICE_KEY` | Supabase service role key | ✅ |
+| `JWT_SECRET_KEY` | Auto-generated by Render | ✅ |
+| `JWT_ALGORITHM` | HS256 | ✅ |
+| `OPENROUTER_API_KEY` | For Gemini AI | ✅ |
+| `WINSTON_API_KEY` | For plagiarism detection | ✅ |
+| `HF_API_KEY` | Hugging Face API key | ✅ |
+| `CORS_ORIGINS` | Vercel frontend URL | ✅ |
+| `LINGO_API_KEY` | For translations | Optional |
+| `SEMANTIC_SCHOLAR_API_KEY` | For paper search | Optional |
+
+### Frontend (Vercel)
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `NEXT_PUBLIC_API_URL` | Backend API URL + /api/v1 | ✅ |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL | ✅ |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon key | ✅ |
+| `NEXT_PUBLIC_LINGO_API_KEY` | Lingo.dev API key | Optional |
 
 ---
 
-## 🆘 Need Help?
+## 🆘 Common Deployment Errors
+
+### "Cannot find module"
+```bash
+# Solution: Verify package.json dependencies
+npm install
+npm run build  # Test locally first
+```
+
+### "API URL not defined"
+```bash
+# Solution: Set NEXT_PUBLIC_API_URL in Vercel
+# Must start with NEXT_PUBLIC_
+```
+
+### "CORS policy error"
+```bash
+# Solution: Update CORS_ORIGINS in Render backend
+# Format: https://domain1.com,https://domain2.com
+```
+
+### "Database connection refused"
+```bash
+# Solution: Check Supabase credentials
+# Verify database is not paused
+```
+
+---
+
+## 🎯 Post-Deployment Recommendations
+
+1. **Set up monitoring**:
+   - Add Sentry for error tracking
+   - Use Vercel Analytics
+   - Monitor Render logs
+
+2. **Configure custom domain**:
+   - Buy domain (Namecheap, Google Domains)
+   - Add to Vercel project settings
+   - Update CORS_ORIGINS in backend
+
+3. **Optimize performance**:
+   - Enable Vercel Edge Functions for API routes
+   - Use Render's cache headers
+   - Optimize images with Next.js Image component
+
+4. **Add analytics**:
+   - Google Analytics or Plausible
+   - Vercel Web Analytics (built-in)
+
+5. **Set up backups**:
+   - Supabase automatic backups (Pro plan)
+   - Export database regularly
+
+---
+
+## 📞 Support Resources
 
 - **Vercel Docs**: https://vercel.com/docs
 - **Render Docs**: https://render.com/docs
 - **Supabase Docs**: https://supabase.com/docs
-- **Clerk Docs**: https://clerk.com/docs
+- **FastAPI Docs**: https://fastapi.tiangolo.com
 
 ---
 
-**Good luck with your deployment! 🎉**
+## ✅ Deployment Checklist
+
+### Pre-Deployment
+- [ ] Commit all code to GitHub
+- [ ] Run database migration in Supabase
+- [ ] Get all required API keys
+- [ ] Update `.env.example` files
+
+### Backend Deployment
+- [ ] Deploy backend to Render
+- [ ] Set all environment variables
+- [ ] Test health endpoint
+- [ ] Test authentication endpoints
+- [ ] Copy backend URL
+
+### Frontend Deployment
+- [ ] Set NEXT_PUBLIC_API_URL with backend URL
+- [ ] Deploy frontend to Vercel
+- [ ] Test registration/login
+- [ ] Test all features
+
+### Post-Deployment
+- [ ] Update CORS_ORIGINS in backend
+- [ ] Redeploy backend
+- [ ] Configure custom domain (optional)
+- [ ] Set up monitoring
+- [ ] Document production URLs
+
+---
+
+**Deployment Status**: Ready for production! 🚀
+**Last Updated**: 2025-11-16

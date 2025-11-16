@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { apiClient } from '@/lib/api-client';
-import { BarChart3, Loader2, Users, DollarSign, Calendar, MapPin } from 'lucide-react';
+import { BarChart3, Loader2, Users, DollarSign, Calendar, MapPin, Info } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface District {
@@ -133,8 +133,18 @@ export default function ImpactPage() {
           </p>
         </div>
 
+        {/* Coming Soon Banner */}
+        <Alert className="bg-blue-50 border-blue-200">
+          <Info className="h-4 w-4 text-blue-600" />
+          <AlertDescription className="text-blue-800">
+            <span className="font-semibold">Coming Soon!</span> This feature is currently under development.
+            The Impact Prediction tool will help you forecast population reach, economic benefits,
+            and real-world impact of your research. Check back in the next release (v2.2).
+          </AlertDescription>
+        </Alert>
+
         {/* Input Form */}
-        <Card>
+        <Card className="opacity-60 pointer-events-none">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BarChart3 className="h-5 w-5" />

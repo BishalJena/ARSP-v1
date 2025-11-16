@@ -18,13 +18,38 @@ checksums:
     common/cancel: 2e2a849c2223911717de8caa2c71bade
     common/submit: 7c91ef5f747eea9f77a9c4f23e19fb2e
     common/save: f7a2929f33bc420195e59ac5a8bcd454
-    dashboard/welcome: 482aeda66f13144604355053b3d38dd9
+    dashboard/welcome: c9380ea68c8c76ea451bd9613329a07c
+    dashboard/welcome_default: c9380ea68c8c76ea451bd9613329a07c
+    dashboard/tagline: 7d62381fbe8c17c77b632688e1dae046
     dashboard/topics: c86fc8603295ff4cb2e6e640ed09d390
+    dashboard/topics_desc: 5397c69e45cb6f5dcc5c2320bbc7a0de
     dashboard/papers: e5f67df0cdf099941659321298ec8765
+    dashboard/papers_desc: 43d35d3803c519e06872406426bcc983
     dashboard/plagiarism: 8f8f5dfab69f73309a727efbc4a83245
+    dashboard/plagiarism_desc: 7a280b993507db8bdbee489e67545eac
     dashboard/journals: 6fb013964e272ea0a3c1c8f4d0522ac4
+    dashboard/journals_desc: 7be97e594f71f9c9fd4303a3a79e8f09
     dashboard/government: 57480df100e491e8f5d54d79a482f78d
+    dashboard/government_desc: d67c01f7baf6086eb91c168341a3ad21
     dashboard/impact: e6d120c06850fd64d89eb3939038adeb
+    dashboard/impact_desc: 64f8e7bab0935282744931ebce76342f
+    dashboard/stats/active_projects: 18a974eaa9cde83bd3d7ceefa97f77a9
+    dashboard/stats/active_projects_hint: 361a5beee3b41e8ea6f280673180bf0e
+    dashboard/stats/papers_analyzed: e46f3cadd7910666fed9ada9e23869be
+    dashboard/stats/papers_analyzed_hint: b29d819a0f10100f75b6fddffb861a69
+    dashboard/stats/plagiarism_checks: f846bcf492f340680bc9c82cc19a94cf
+    dashboard/stats/plagiarism_checks_hint: 2f25ef8bcfae3b0fbf7ceaeadb97cefb
+    dashboard/research_tools: b218c2928fc9e1961e9d0ebd879cc07f
+    dashboard/getting_started/title: fbd403146395526d68ac68d142a50e21
+    dashboard/getting_started/description: da5980b0f3a85685c5a569e89644ec8f
+    dashboard/getting_started/step1_title: 52161a67b27b91be86ba67a26fbf3fdd
+    dashboard/getting_started/step1_desc: 55be18e113b5013e59d55250f4a57155
+    dashboard/getting_started/step2_title: 2a8cca2317f8f2f297387a5cfb62e062
+    dashboard/getting_started/step2_desc: c1022eff2acae7c7672b796e6c8d2743
+    dashboard/getting_started/step3_title: 1c15ee5f52c46a5a84ced0a01df5e0a4
+    dashboard/getting_started/step3_desc: 25af79241abcc12ec6b19c985b7effa7
+    dashboard/getting_started/step4_title: d9e7de9b99a869e515170eddcbdaff93
+    dashboard/getting_started/step4_desc: f64f6e22f866439eeb690660e44feb44
     topics/title: c86fc8603295ff4cb2e6e640ed09d390
     topics/description: e8bdc0b241c1e59a7642887e687046c5
     topics/search_label: 0dde8a00c3d667a42f763183527a4187
@@ -61,18 +86,65 @@ checksums:
     plagiarism/title: 8f8f5dfab69f73309a727efbc4a83245
     plagiarism/description: 599351949c19a36b1cb80e97709f1ecc
     plagiarism/check_title: d6afe237831e175a0859e5513be4bcf8
-    plagiarism/check_description: e75095a3473bc27f0d652f79971521dd
-    plagiarism/text_placeholder: 7398bb42fa0ed56ffd77244934f57fbb
+    plagiarism/check_description: 83409f33021298335e3943f802c70302
+    plagiarism/text_placeholder: 95199cbf98b9ede35240384d00f18d41
     plagiarism/button_check: bcc27f0363f24752c9896ae896ef03b6
-    plagiarism/checking: 7fb996bee0359e5dbdd92bd6e147a814
+    plagiarism/checking: 5fbfb195e40dcd7ddb0b6b744cfe3d14
     plagiarism/originality_score: 0206378c08bee697e9a7e932dde17db6
-    plagiarism/plagiarism_level_high: a76a6c876ffc81e174984d7ca577d97b
-    plagiarism/plagiarism_level_medium: ebbe6c8c5530266aa93723755d74671e
-    plagiarism/plagiarism_level_low: ffb00878db1d6ab59dbd51c0e180b147
+    plagiarism/plagiarism_score: fbf92cfcaa1350ed78e4dec81805de66
+    plagiarism/plagiarism_level_high: 16372294108f169683263c353c4071dc
+    plagiarism/plagiarism_level_medium: a3e1bf9f8c5eddcac5170f6523d745c3
+    plagiarism/plagiarism_level_low: ec2e1401e28f5878544d6a18cd8639df
     plagiarism/similar_sources: 96560edb682e91601f21a7520e2a96c1
+    plagiarism/source_breakdown: 7717778bf9a56354e074725c8b09bd13
+    plagiarism/source_breakdown_desc: 2d1dea86e10aa26abf3eaf7f03feede6
+    plagiarism/similar_sources_desc: 032a40b67b3f430a119a2fe81817cd06
     plagiarism/similarity: 5d6f459c4127918f26eeaefddd76bc4a
     plagiarism/matched_text: 76acd3b8cda90386af72b6560905351b
     plagiarism/confidence: 568fbdc3b8579def373eee5a8738bac0
+    plagiarism/flagged_sections: a11bc86899ac7c114092809ebdbbf14e
+    plagiarism/flagged_sections_desc: 8704a4b41923f8e2fb024302a2ec62e4
+    plagiarism/common_terms: 842110df57742388df3099c4ca64cf83
+    plagiarism/common_terms_desc: 9a71389eb323bb99d3197003c4e6ca26
+    plagiarism/stats/total_words: f3c012be69fe390d380d0bdf83b69fdd
+    plagiarism/stats/similar_words: a790453de3b778e7e99dcb29231dadb8
+    plagiarism/stats/sources_scanned: ac670892dc14cbde32667248aaa20812
+    plagiarism/stats/scan_time: 2ce6adbcb954ff71566100bef451ccee
+    plagiarism/severity/high: 5d231ff8254aabc875f194c4b4f49c97
+    plagiarism/severity/medium: 1f527cd6d1ed602930bcaa303f503b51
+    plagiarism/severity/low: 509b5cb7c1e8a185e0aa6d38c64c90e8
+    plagiarism/labels/match: 5589bf1edc4df14c04c298e9317f5439
+    plagiarism/labels/similar: 84e9e827fa4ae66ddc37b1799b40f406
+    plagiarism/labels/overlap: 950970eb6ac99a0a29fd30c5195c4aea
+    plagiarism/labels/words_matched: cdb6e841aa2af4769770ac459327bbb5
+    plagiarism/labels/section_of: 474c0af8ab5fb8cbf098a4f1e1a0373d
+    plagiarism/labels/action_required: 5dc42685e6bc2289929213d41ed9545d
+    plagiarism/labels/very_similar: e51d1440c4ac7e9ecf829648a9797431
+    plagiarism/messages/action_required_text: de051a71f5d59db5fc79a7a1019a443a
+    plagiarism/messages/no_data_banner: 15c45cfe120b23d1a1aa41b9468ba2b7
+    plagiarism/messages/scroll_to_see_all: 5c61acbaaacddf11a5da0db491639805
+    plagiarism/messages/view_source: c8351df67b80bded5869c2893cef78eb
+    plagiarism/messages/view_original_source: 65d4df2ba4ac57e35beaa0da5267b7dd
+    plagiarism/messages/no_plagiarism_title: 1ba30f506df605f9a8691f32dca79791
+    plagiarism/messages/no_plagiarism_desc: 60358912074564588142c93828b67ee4
+    plagiarism/messages/empty_title: d852d6b2fb16638ec777050b4b5fdeec
+    plagiarism/messages/empty_desc: d3229cdac505cb4d03847b5a667d7bc0
+    plagiarism/tips/title: 5d826a494f8fc2eb4a11fcee38871398
+    plagiarism/tips/paraphrase: f66954d64973d36d1f0e442aabc3f934
+    plagiarism/tips/cite: 4c74b14f65ba9fbdf34b574d4248d836
+    plagiarism/tips/quotes: d24820cf36f3176445038b72e9185f65
+    plagiarism/tips/analysis: 6d6f72c815a03f59faa394320e749564
+    plagiarism/empty/feature1_title: a08475a54f872de8ad8e2a0495e5865a
+    plagiarism/empty/feature1_desc: ef40e5304b669ef2225958fd60828e69
+    plagiarism/empty/feature2_title: 4969e7481e0d61fa800a4c49fdb276e2
+    plagiarism/empty/feature2_desc: f075e9d4f6b59fedbd70d6746f2df89e
+    plagiarism/empty/feature3_title: 8fa9de987c35efede77f5ff7fc3a35ed
+    plagiarism/empty/feature3_desc: 3c08d52acc62ca8d6b87fd8dd35e46e7
+    plagiarism/results/your_text: 18cca4b6605d607f6351f3b7526ec1e2
+    plagiarism/results/matching_source: df3f22bc3191fae02494f102327339fd
+    plagiarism/results/language_detected: fe4f77160d67f5913e5ba773c6ec6496
+    plagiarism/results/processing_time: 6575888e59ea3eaf8692df77a58fae99
+    plagiarism/results/sources_checked: 9cd9e7936ab962c982b618b6f0f5f3be
     journals/title: 6fb013964e272ea0a3c1c8f4d0522ac4
     journals/description: 168adf213c58f8accc99fe59ed4e12ec
     journals/form_title: 7cb515ac326bda173a27aee29f5fd0cd

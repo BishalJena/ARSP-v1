@@ -1,5 +1,6 @@
 """Application configuration."""
 from pydantic_settings import BaseSettings
+from pydantic import ConfigDict
 from typing import List
 
 
@@ -14,9 +15,9 @@ class Settings(BaseSettings):
     SUPABASE_KEY: str
     SUPABASE_SERVICE_KEY: str
 
-    # Clerk
-    CLERK_SECRET_KEY: str
-    CLERK_PUBLISHABLE_KEY: str
+    # JWT Authentication
+    JWT_SECRET_KEY: str = "your-secret-key-change-in-production-min-32-chars"
+    JWT_ALGORITHM: str = "HS256"
 
     # Lingo.dev
     LINGO_API_KEY: str
@@ -30,6 +31,7 @@ class Settings(BaseSettings):
     # External APIs
     SEMANTIC_SCHOLAR_API_KEY: str = ""
     CROSSREF_EMAIL: str = ""
+    WINSTON_API_KEY: str = ""  # Winston AI plagiarism detection
 
     # Server
     HOST: str = "0.0.0.0"
@@ -48,9 +50,11 @@ class Settings(BaseSettings):
     API_V1_PREFIX: str = "/api/v1"
     PROJECT_NAME: str = "ARSP API"
 
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
+    model_config = ConfigDict(
+        env_file=".env",
+        case_sensitive=True,
+        extra="ignore"  # Ignore extra env variables not defined in schema
+    )
 
 
 settings = Settings()

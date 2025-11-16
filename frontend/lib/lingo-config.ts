@@ -121,10 +121,10 @@ export const supportedLocales = [
   'zh',
   'es',
   'fr',
-  'ar',
-  'ru',
   'pt',
   'de',
+  'ja',
+  'ko',
 ];
 
 // Helper function to get language name
@@ -139,10 +139,10 @@ export const getLanguageName = (locale: string): string => {
     zh: '中文',
     es: 'Español',
     fr: 'Français',
-    ar: 'العربية',
-    ru: 'Русский',
     pt: 'Português',
     de: 'Deutsch',
+    ja: '日本語',
+    ko: '한국어',
   };
   return languageNames[locale] || locale;
 };
@@ -159,10 +159,10 @@ export const getLanguageFlag = (locale: string): string => {
     zh: '🇨🇳',
     es: '🇪🇸',
     fr: '🇫🇷',
-    ar: '🇸🇦',
-    ru: '🇷🇺',
     pt: '🇵🇹',
     de: '🇩🇪',
+    ja: '🇯🇵',
+    ko: '🇰🇷',
   };
   return flags[locale] || '🌐';
 };

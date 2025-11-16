@@ -15,14 +15,8 @@
     "NEXT_PUBLIC_SUPABASE_ANON_KEY": {
       "description": "Supabase Anonymous Key"
     },
-    "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY": {
-      "description": "Clerk Publishable Key"
-    },
-    "CLERK_SECRET_KEY": {
-      "description": "Clerk Secret Key"
-    },
     "NEXT_PUBLIC_LINGO_API_KEY": {
-      "description": "Lingo.dev API Key"
+      "description": "Lingo.dev API Key for translations"
     }
   },
   "headers": [

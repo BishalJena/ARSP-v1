@@ -99,18 +99,79 @@
     "title": "Plagiarism Check",
     "description": "Ensure originality with advanced AI-powered plagiarism detection",
     "check_title": "Check Your Text",
-    "check_description": "Paste your text below to check for plagiarism and get an originality score",
-    "text_placeholder": "Enter your text here...",
+    "check_description": "Paste your abstract or research text below to check for plagiarism and get an originality score",
+    "text_placeholder": "Paste your research abstract or text here (minimum 100 characters)...",
     "button_check": "Check Plagiarism",
-    "checking": "Checking...",
+    "checking": "Analyzing your text...",
     "originality_score": "Originality Score",
-    "plagiarism_level_high": "High Originality",
-    "plagiarism_level_medium": "Medium Originality",
-    "plagiarism_level_low": "Low Originality",
+    "plagiarism_score": "Plagiarism Score",
+    "plagiarism_level_high": "Excellent",
+    "plagiarism_level_medium": "Good",
+    "plagiarism_level_low": "Needs Review",
     "similar_sources": "Similar Sources",
+    "source_breakdown": "Source Breakdown",
+    "source_breakdown_desc": "Papers with overlapping content",
+    "similar_sources_desc": "Sources where similar content was found",
     "similarity": "Similarity",
     "matched_text": "Matched Text",
-    "confidence": "Confidence"
+    "confidence": "Confidence",
+    "flagged_sections": "Flagged Sections",
+    "flagged_sections_desc": "Text segments that match existing sources",
+    "common_terms": "Common Academic Terms",
+    "common_terms_desc": "These terms are commonly used in academic literature and don't necessarily indicate plagiarism.",
+    "stats": {
+      "total_words": "Total Words",
+      "similar_words": "Similar Words",
+      "sources_scanned": "Sources Scanned",
+      "scan_time": "Scan Time"
+    },
+    "severity": {
+      "high": "High Priority",
+      "medium": "Medium Priority",
+      "low": "Low Priority"
+    },
+    "labels": {
+      "match": "Match",
+      "similar": "Similar",
+      "overlap": "overlap",
+      "words_matched": "Words Matched",
+      "section_of": "Section {{current}} of {{total}}",
+      "action_required": "Action Required",
+      "very_similar": "Very similar!"
+    },
+    "messages": {
+      "action_required_text": "This section is nearly identical to an existing source. Rewrite or cite properly.",
+      "no_data_banner": "These sources were flagged as similar. Detailed word-level analysis not available for all sources.",
+      "scroll_to_see_all": "Scroll to see all",
+      "view_source": "View source",
+      "view_original_source": "View original source",
+      "no_plagiarism_title": "Excellent! No Plagiarism Detected",
+      "no_plagiarism_desc": "Your text shows high originality. Great work!",
+      "empty_title": "Ready to Check for Plagiarism",
+      "empty_desc": "Paste your text above to get started"
+    },
+    "tips": {
+      "title": "Tips for Researchers",
+      "paraphrase": "Paraphrase properly and add your own analysis",
+      "cite": "Add proper citations for all sources",
+      "quotes": "Use direct quotes sparingly and mark them clearly",
+      "analysis": "Include your own critical analysis and interpretation"
+    },
+    "empty": {
+      "feature1_title": "Internet-Wide Scan",
+      "feature1_desc": "Check against millions of sources online",
+      "feature2_title": "Instant Results",
+      "feature2_desc": "Get detailed plagiarism reports in seconds",
+      "feature3_title": "Source Attribution",
+      "feature3_desc": "See exactly where similar content appears"
+    },
+    "results": {
+      "your_text": "Your Text",
+      "matching_source": "Matching Source",
+      "language_detected": "Language Detected",
+      "processing_time": "Processing Time",
+      "sources_checked": "Sources Checked"
+    }
   },
   "journals": {
     "title": "Journal Finder",

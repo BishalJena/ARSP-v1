@@ -1,15 +1,16 @@
-"""Plagiarism detection service using Sentence Transformers."""
+"""Plagiarism detection service using Winston AI and Sentence Transformers."""
 import httpx
 import numpy as np
 import re
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any, Tuple, Optional
 from datetime import datetime, timezone
 import time
 from ..core.config import settings
+from .winston_service import winston_service
 
 
 class PlagiarismService:
-    """Service for detecting plagiarism using semantic similarity."""
+    """Service for detecting plagiarism using Winston AI and semantic similarity."""
 
     def __init__(self):
         self.hf_api_url = "https://api-inference.huggingface.co/models"
@@ -20,6 +21,58 @@ class PlagiarismService:
         self.hf_headers = {}
         if settings.HF_API_KEY:
             self.hf_headers["Authorization"] = f"Bearer {settings.HF_API_KEY}"
+
+    async def check_plagiarism_enhanced(
+        self,
+        text: Optional[str] = None,
+        file_url: Optional[str] = None,
+        website: Optional[str] = None,
+        excluded_sources: Optional[List[str]] = None,
+        language: str = "auto",
+        country: str = "us",
+        use_winston: bool = True
+    ) -> Dict[str, Any]:
+        """
+        Enhanced plagiarism detection with Winston AI.
+
+        Args:
+            text: Text to check (100-120,000 characters)
+            file_url: URL to publicly accessible file
+            website: Website URL to scan
+            excluded_sources: Domains/URLs to exclude
+            language: Language code or 'auto'
+            country: Country code
+            use_winston: Use Winston AI (recommended) vs legacy method
+
+        Returns:
+            Comprehensive plagiarism report
+        """
+        # Use Winston AI if available and requested
+        if use_winston and settings.WINSTON_API_KEY:
+            try:
+                result = await winston_service.check_plagiarism(
+                    text=text,
+                    file_url=file_url,
+                    website=website,
+                    excluded_sources=excluded_sources,
+                    language=language,
+                    country=country
+                )
+                return result
+            except Exception as e:
+                print(f"Winston AI check failed: {e}")
+                # Fall back to legacy method if Winston fails
+                if text:
+                    print("Falling back to legacy plagiarism detection...")
+                    return await self.check_plagiarism(text, language, check_online=True)
+                else:
+                    raise Exception(f"Winston AI plagiarism check failed and no text provided for fallback: {str(e)}")
+
+        # Fallback to legacy method
+        if not text:
+            raise ValueError("Text is required when not using Winston AI")
+
+        return await self.check_plagiarism(text, language, check_online=True)
 
     async def check_plagiarism(
         self,
@@ -107,7 +160,8 @@ class PlagiarismService:
                 "flagged_sections": flagged_sections[:10],  # Limit to top 10
                 "citations": citations[:10],  # Limit to top 10
                 "checked_at": datetime.now(timezone.utc).isoformat(),
-                "processing_time_seconds": round(processing_time, 2)
+                "processing_time_seconds": round(processing_time, 2),
+                "provider": "legacy"
             }
 
         except Exception as e:

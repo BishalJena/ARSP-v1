@@ -21,13 +21,42 @@
     "save": "जतन करा"
   },
   "dashboard": {
-    "welcome": "ARSP मध्ये आपले स्वागत आहे",
+    "welcome": "डॅशबोर्ड",
+    "welcome_default": "डॅशबोर्ड",
+    "tagline": "आपल्या संशोधन प्रवासाला गती देण्यासाठी AI-संचालित साधने एक्सप्लोर करा",
     "topics": "विषय शोध",
+    "topics_desc": "ट्रेंडिंग संशोधन विषय शोधा आणि त्यांच्या विकासाचा मागोवा घ्या",
     "papers": "पेपर विश्लेषण",
+    "papers_desc": "AI-संचालित अंतर्दृष्टीसह संशोधन पेपर अपलोड करा आणि विश्लेषण करा",
     "plagiarism": "साहित्यचौर्य तपासणी",
+    "plagiarism_desc": "प्रगत साहित्यचौर्य शोध यंत्रणेसह मूळ असल्याची खात्री करा",
     "journals": "जर्नल शोधक",
+    "journals_desc": "आपल्या संशोधनासाठी वैयक्तिकृत जर्नल शिफारसी मिळवा",
     "government": "सरकारी संरेखन",
-    "impact": "प्रभाव अंदाज"
+    "government_desc": "सरकारी प्राधान्यक्रम आणि एसडीजी उद्दिष्टांशी संशोधन संरेखित करा",
+    "impact": "प्रभाव अंदाज",
+    "impact_desc": "आपल्या संशोधनाचा वास्तविक जगातील प्रभाव भाकित करा",
+    "stats": {
+      "active_projects": "सक्रिय प्रकल्प",
+      "active_projects_hint": "संशोधन पेपर अपलोड करून सुरुवात करा",
+      "papers_analyzed": "विश्लेषित पेपर्स",
+      "papers_analyzed_hint": "आमची AI-संचालित विश्लेषण साधने वापरा",
+      "plagiarism_checks": "साहित्यचौर्य तपासण्या",
+      "plagiarism_checks_hint": "आपल्या कामाच्या मूळ असल्याची खात्री करा"
+    },
+    "research_tools": "संशोधन साधने",
+    "getting_started": {
+      "title": "सुरुवात करणे",
+      "description": "स्मार्ट रिसर्च हबचा सर्वोत्तम उपयोग करण्यासाठी या पावलांचे अनुसरण करा",
+      "step1_title": "आपला संशोधन पेपर अपलोड करा",
+      "step1_desc": "AI-संचालित विश्लेषणासाठी पेपर अपलोड करून सुरुवात करा",
+      "step2_title": "साहित्यचौर्यासाठी तपासा",
+      "step2_desc": "सादर करण्यापूर्वी मूळ असल्याची खात्री करा",
+      "step3_title": "योग्य जर्नल शोधा",
+      "step3_desc": "वैयक्तिकृत जर्नल शिफारसी मिळवा",
+      "step4_title": "संशोधन प्रभाव भाकित करा",
+      "step4_desc": "आपल्या कामाचा संभाव्य प्रभाव समजून घ्या"
+    }
   },
   "topics": {
     "title": "विषय शोध",
@@ -70,18 +99,79 @@
     "title": "सदृश्यता तपासणी",
     "description": "प्रगत AI-संचालित सदृश्यता शोध यंत्रणेसह मूळ असल्याची खात्री करा",
     "check_title": "आपला मजकूर तपासा",
-    "check_description": "सदृश्यता तपासण्यासाठी आणि मूळपणाचे गुण मिळवण्यासाठी खाली आपला मजकूर पेस्ट करा",
-    "text_placeholder": "आपला मजकूर येथे टाका...",
+    "check_description": "सदृश्यता तपासण्यासाठी आणि मौलिकता गुणांक मिळवण्यासाठी आपला सारांश किंवा संशोधन मजकूर खाली चिकटवा",
+    "text_placeholder": "आपला संशोधन सारांश किंवा मजकूर येथे चिकटवा (किमान १०० अक्षरे)...",
     "button_check": "सदृश्यता तपासा",
-    "checking": "तपासत आहे...",
+    "checking": "आपला मजकूर विश्लेषित करत आहे...",
     "originality_score": "मूळपणाचे गुण",
-    "plagiarism_level_high": "उच्च मूळपणा",
-    "plagiarism_level_medium": "मध्यम मूळपणा",
-    "plagiarism_level_low": "कमी मूळपणा",
+    "plagiarism_score": "Plagiarism Score",
+    "plagiarism_level_high": "उत्कृष्ट",
+    "plagiarism_level_medium": "चांगले",
+    "plagiarism_level_low": "पुनरावलोकन आवश्यक",
     "similar_sources": "समान स्त्रोत",
+    "source_breakdown": "Source Breakdown",
+    "source_breakdown_desc": "Papers with overlapping content",
+    "similar_sources_desc": "Sources where similar content was found",
     "similarity": "समानता",
     "matched_text": "जुळलेला मजकूर",
-    "confidence": "विश्वास"
+    "confidence": "विश्वास",
+    "flagged_sections": "Flagged Sections",
+    "flagged_sections_desc": "Text segments that match existing sources",
+    "common_terms": "Common Academic Terms",
+    "common_terms_desc": "These terms are commonly used in academic literature and don't necessarily indicate plagiarism.",
+    "stats": {
+      "total_words": "Total Words",
+      "similar_words": "Similar Words",
+      "sources_scanned": "Sources Scanned",
+      "scan_time": "Scan Time"
+    },
+    "severity": {
+      "high": "High Priority",
+      "medium": "Medium Priority",
+      "low": "Low Priority"
+    },
+    "labels": {
+      "match": "Match",
+      "similar": "Similar",
+      "overlap": "overlap",
+      "words_matched": "Words Matched",
+      "section_of": "Section {{current}} of {{total}}",
+      "action_required": "Action Required",
+      "very_similar": "Very similar!"
+    },
+    "messages": {
+      "action_required_text": "This section is nearly identical to an existing source. Rewrite or cite properly.",
+      "no_data_banner": "These sources were flagged as similar. Detailed word-level analysis not available for all sources.",
+      "scroll_to_see_all": "Scroll to see all",
+      "view_source": "View source",
+      "view_original_source": "View original source",
+      "no_plagiarism_title": "Excellent! No Plagiarism Detected",
+      "no_plagiarism_desc": "Your text shows high originality. Great work!",
+      "empty_title": "Ready to Check for Plagiarism",
+      "empty_desc": "Paste your text above to get started"
+    },
+    "tips": {
+      "title": "Tips for Researchers",
+      "paraphrase": "Paraphrase properly and add your own analysis",
+      "cite": "Add proper citations for all sources",
+      "quotes": "Use direct quotes sparingly and mark them clearly",
+      "analysis": "Include your own critical analysis and interpretation"
+    },
+    "empty": {
+      "feature1_title": "Internet-Wide Scan",
+      "feature1_desc": "Check against millions of sources online",
+      "feature2_title": "Instant Results",
+      "feature2_desc": "Get detailed plagiarism reports in seconds",
+      "feature3_title": "Source Attribution",
+      "feature3_desc": "See exactly where similar content appears"
+    },
+    "results": {
+      "your_text": "Your Text",
+      "matching_source": "Matching Source",
+      "language_detected": "Language Detected",
+      "processing_time": "Processing Time",
+      "sources_checked": "Sources Checked"
+    }
   },
   "journals": {
     "title": "जर्नल शोधक",

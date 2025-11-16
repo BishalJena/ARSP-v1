@@ -1,6 +1,6 @@
 """Services layer for business logic."""
 from .topics_service import topics_service
-from .papers_service import papers_service
+# Legacy papers_service removed - using papers_service_v2 with Gemini instead
 from .plagiarism_service import plagiarism_service
 from .journals_service import journals_service
 from .translation_service import translation_service
