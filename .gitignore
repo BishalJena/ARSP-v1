@@ -55,4 +55,10 @@ Thumbs.db
 *.tmp
 temp/
 .temp/
-DEPLOYMENT_GUIDE.md
+
+# Claude Code
+.claude/
+
+# Backup files
+*.backup
+*.bak

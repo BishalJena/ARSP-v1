@@ -90,7 +90,7 @@ cd ARSP-v1
 
 ### 2. Get API Keys
 
-See [docs/QUICK_START.md](./docs/QUICK_START.md) for detailed instructions on obtaining:
+See [SETUP.md](./SETUP.md) for detailed instructions on obtaining:
 - Supabase credentials
 - Clerk authentication keys
 - Lingo.dev API key
@@ -109,20 +109,17 @@ pip install -r requirements.txt
 **Frontend:**
 ```bash
 cd frontend
-cp .env.local.example .env.local
+cp .env.example .env.local
 # Fill in your API keys in .env.local
 npm install
 ```
 
 ### 4. Set Up Database
 
-Apply migrations in Supabase SQL Editor:
 ```bash
-# Run migrations from arsp-app-backup/supabase/migrations/
-001_create_tables.sql
-002_enable_rls.sql
-003_storage_setup.sql
-seed.sql
+cd backend
+python setup_db_auto.py
+# This will automatically create tables and seed data from supabase_setup.sql
 ```
 
 ### 5. Start Development Servers
@@ -130,9 +127,9 @@ seed.sql
 **Backend (Terminal 1):**
 ```bash
 cd backend
-python -m app.main
+uvicorn app.main:app --reload
 # API: http://localhost:8000
-# Docs: http://localhost:8000/api/docs
+# Docs: http://localhost:8000/docs
 ```
 
 **Frontend (Terminal 2):**
@@ -152,70 +149,36 @@ Visit **http://localhost:3000** and start exploring!
 
 | Document | Description |
 |----------|-------------|
-| [QUICK_START.md](./docs/QUICK_START.md) | Fast setup guide with API keys |
-| [SETUP_GUIDE.md](./docs/SETUP_GUIDE.md) | Comprehensive setup instructions |
-| [TECHNICAL_AUDIT.md](./docs/TECHNICAL_AUDIT.md) | Code review and known issues |
-| [COMPLETION_SUMMARY.md](./docs/COMPLETION_SUMMARY.md) | Implementation summary |
-| [API_DOCUMENTATION.md](./docs/API_DOCUMENTATION.md) | Backend API reference |
-| [tasks.md](./.kiro/specs/arsp-multilingual-research-platform/tasks.md) | Implementation checklist |
+| [SETUP.md](./SETUP.md) | Local development setup |
+| [DEPLOYMENT.md](./DEPLOYMENT.md) | Production deployment (Render + Vercel) |
+| [CONTRIBUTING.md](./CONTRIBUTING.md) | How to contribute |
 
 ---
 
-## 🏗️ Architecture
+## 🏗️ Tech Stack & Architecture
 
-### Tech Stack
-
-**Frontend:**
-- Next.js 16 (App Router)
-- React 19
-- TypeScript
-- Tailwind CSS
-- shadcn/ui components
-- Clerk authentication
-- Lingo.dev SDK
-
-**Backend:**
-- FastAPI
-- Python 3.10+
-- Pydantic
-- Supabase (PostgreSQL)
-- Hugging Face Inference API
-- Sentence Transformers
-
-**External APIs:**
-- Semantic Scholar API
-- arXiv API
-- CrossRef API
-- Lingo.dev Translation API
-
-### Project Structure
+**Frontend:** Next.js 16 • React 19 • TypeScript • Tailwind CSS • Clerk Auth • Lingo.dev (15 languages)
+**Backend:** FastAPI • Python 3.10+ • Supabase (PostgreSQL) • Hugging Face AI • Sentence Transformers
+**APIs:** Semantic Scholar (230M+ papers) • arXiv • CrossRef • Lingo.dev Translation
 
 ```
 ARSP-v1/
-├── backend/               # FastAPI backend
-│   ├── app/
-│   │   ├── api/v1/       # API endpoints
-│   │   ├── core/         # Config, auth, db
-│   │   ├── services/     # Business logic
-│   │   └── schemas/      # Pydantic models
-│   ├── requirements.txt
-│   └── README.md
+├── backend/          # FastAPI backend
+│   ├── app/         # API endpoints, services, schemas
+│   └── render.yml   # Render deployment config
 │
-├── frontend/             # Next.js frontend
-│   ├── app/             # App router pages
-│   ├── components/      # React components
-│   ├── lib/             # Utilities & hooks
-│   ├── locales/         # Translation files
-│   └── README.md
+├── frontend/         # Next.js frontend
+│   ├── app/         # Pages (App Router)
+│   ├── components/  # React components
+│   ├── lib/         # API clients
+│   ├── locales/     # 15 language files
+│   └── vercel.json  # Vercel deployment config
 │
-├── docs/                # Documentation
-│   ├── QUICK_START.md
-│   ├── SETUP_GUIDE.md
-│   ├── TECHNICAL_AUDIT.md
-│   └── ...
-│
-├── .kiro/               # Project specs
-└── arsp-app-backup/     # Database migrations
+├── README.md         # This file
+├── SETUP.md          # Development setup
+├── DEPLOYMENT.md     # Production deployment
+├── CONTRIBUTING.md   # Contribution guide
+└── LICENSE           # MIT License
 ```
 
 ---
@@ -234,7 +197,7 @@ ARSP-v1/
 | Testing | ⏳ 0% | Requires API keys |
 | Deployment | ⏳ 0% | Pending testing |
 
-See [docs/COMPLETION_SUMMARY.md](./docs/COMPLETION_SUMMARY.md) for detailed breakdown.
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for technical details.
 
 ---
 
@@ -242,7 +205,7 @@ See [docs/COMPLETION_SUMMARY.md](./docs/COMPLETION_SUMMARY.md) for detailed brea
 
 ### Backend API Testing
 
-Visit **http://localhost:8000/api/docs** for interactive Swagger documentation.
+Visit **http://localhost:8000/docs** for interactive Swagger documentation.
 
 **Available Endpoints:**
 - `GET /api/v1/topics/trending` - Discover trending topics
@@ -263,19 +226,13 @@ Visit **http://localhost:8000/api/docs** for interactive Swagger documentation.
 
 ---
 
-## 🔧 Known Issues
+## 🚢 Deployment
 
-See [docs/TECHNICAL_AUDIT.md](./docs/TECHNICAL_AUDIT.md) for complete list.
+Ready to deploy? See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete instructions on deploying to:
 
-**Critical (Fixed):**
-- ✅ Missing imports in backend services - FIXED
-
-**High Priority:**
-- ⏳ Lingo.dev SDK integration needs verification
-- ⏳ Translation files need generation (`npx lingo translate`)
-- ⏳ Consent endpoint needs implementation
-
-**Estimated Fix Time:** 4-8 hours
+- **Backend**: Render or Railway (Python/FastAPI)
+- **Frontend**: Vercel (Next.js)
+- **Database**: Supabase (already configured)
 
 ---
 
@@ -329,8 +286,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📞 Support
 
 - **Issues:** [GitHub Issues](https://github.com/BishalJena/ARSP-v1/issues)
-- **Documentation:** [docs/](./docs/)
-- **Email:** contact@arsp.dev
+- **Documentation:** See docs above
+- **Email:** bishaljena@example.com
 
 ---
 

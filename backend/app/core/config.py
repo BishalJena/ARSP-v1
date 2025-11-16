@@ -21,8 +21,11 @@ class Settings(BaseSettings):
     # Lingo.dev
     LINGO_API_KEY: str
 
-    # Hugging Face
+    # Hugging Face (Legacy - optional after Gemini migration)
     HF_API_KEY: str = ""
+
+    # OpenRouter (for Gemini 2.0 Flash Lite)
+    OPENROUTER_API_KEY: str = ""
 
     # External APIs
     SEMANTIC_SCHOLAR_API_KEY: str = ""
