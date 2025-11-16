@@ -129,7 +129,7 @@ export default function ImpactPage() {
         <div>
           <h2 className="text-3xl font-bold text-gray-900">Impact Prediction</h2>
           <p className="text-gray-600 mt-2">
-            Predict the real-world impact of your research across Andhra Pradesh
+            Predict the real-world impact of your research across different regions
           </p>
         </div>
 

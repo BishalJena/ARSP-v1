@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Smart Research Hub - AI-Enabled Research Support Platform",
+  title: "ARSP - AI-Enabled Research Support Platform",
   description: "AI-powered multilingual research platform with topic discovery, plagiarism detection, and journal recommendations",
 };
 

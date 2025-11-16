@@ -64,7 +64,7 @@ export default function RegisterPage() {
             Create an Account
           </CardTitle>
           <CardDescription className="text-center">
-            Join Smart Research Hub to start your research journey
+            Join ARSP to start your research journey
           </CardDescription>
         </CardHeader>
         <CardContent>

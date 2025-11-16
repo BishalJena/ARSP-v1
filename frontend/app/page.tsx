@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Sparkles, FileText, CheckCircle, BookOpen, TrendingUp, Globe } from 'lucide-react';
 
@@ -48,7 +49,7 @@ export default function Home() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Sparkles className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold">Smart Research Hub</span>
+            <span className="text-2xl font-bold">ARSP</span>
           </div>
           <div className="flex gap-2">
             <Button variant="ghost" onClick={() => router.push('/login')}>
@@ -66,11 +67,11 @@ export default function Home() {
         <h1 className="text-5xl font-bold tracking-tight mb-6">
           AI-Powered Research Platform
           <br />
-          <span className="text-primary">for Andhra Pradesh</span>
+          <span className="text-primary">for Global Researchers</span>
         </h1>
         <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
           Discover trends, analyze papers, check plagiarism, and align your research with
-          AP Government priorities - all in one intelligent platform.
+          government priorities - all in one intelligent multilingual platform.
         </p>
         <div className="flex gap-4 justify-center">
           <Button size="lg" onClick={() => router.push('/register')}>
@@ -126,22 +127,24 @@ export default function Home() {
             </CardHeader>
           </Card>
 
-          <Card>
+          <Card className="relative">
             <CardHeader>
+              <Badge className="absolute top-4 right-4 bg-yellow-500 hover:bg-yellow-600">Coming Soon</Badge>
               <Globe className="h-10 w-10 text-primary mb-2" />
               <CardTitle>Government Alignment</CardTitle>
               <CardDescription>
-                Map research to AP Government priorities and funding opportunities
+                Map research to government priorities and funding opportunities
               </CardDescription>
             </CardHeader>
           </Card>
 
-          <Card>
+          <Card className="relative">
             <CardHeader>
+              <Badge className="absolute top-4 right-4 bg-yellow-500 hover:bg-yellow-600">Coming Soon</Badge>
               <Sparkles className="h-10 w-10 text-primary mb-2" />
               <CardTitle>Impact Prediction</CardTitle>
               <CardDescription>
-                Quantify real-world impact with district-level demographic data
+                Quantify real-world impact with regional demographic data
               </CardDescription>
             </CardHeader>
           </Card>
@@ -152,20 +155,20 @@ export default function Home() {
       <section className="container mx-auto px-4 py-16 text-center">
         <div className="grid md:grid-cols-4 gap-8">
           <div>
-            <div className="text-4xl font-bold text-primary">6</div>
-            <div className="text-muted-foreground">AI Modules</div>
+            <div className="text-4xl font-bold text-primary">214M+</div>
+            <div className="text-muted-foreground">Research Papers Indexed</div>
           </div>
           <div>
-            <div className="text-4xl font-bold text-primary">5</div>
-            <div className="text-muted-foreground">Languages Supported</div>
-          </div>
-          <div>
-            <div className="text-4xl font-bold text-primary">₹33,200 Cr</div>
-            <div className="text-muted-foreground">Gov Schemes Tracked</div>
+            <div className="text-4xl font-bold text-primary">80M+</div>
+            <div className="text-muted-foreground">Authors</div>
           </div>
           <div>
             <div className="text-4xl font-bold text-primary">13</div>
-            <div className="text-muted-foreground">AP Districts</div>
+            <div className="text-muted-foreground">Languages Supported</div>
+          </div>
+          <div>
+            <div className="text-4xl font-bold text-primary">Billions</div>
+            <div className="text-muted-foreground">In Global Reach</div>
           </div>
         </div>
       </section>
@@ -176,7 +179,7 @@ export default function Home() {
           <CardHeader className="text-center">
             <CardTitle className="text-3xl">Ready to Transform Your Research?</CardTitle>
             <CardDescription className="text-primary-foreground/80 text-lg">
-              Join researchers from across Andhra Pradesh
+              Join researchers from around the world
             </CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center">
@@ -194,7 +197,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t mt-16">
         <div className="container mx-auto px-4 py-8 text-center text-muted-foreground">
-          <p>© 2024 Smart Research Hub. Built for AP Government Colleges.</p>
+          <p>© 2024 ARSP - AI-Enabled Research Support Platform. Empowering Researchers Worldwide.</p>
         </div>
       </footer>
     </div>
