@@ -11,7 +11,7 @@ import httpx
 import asyncio
 import numpy as np
 from typing import List, Dict, Any, Optional
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import time
 from ..core.config import settings
 
@@ -165,8 +165,8 @@ class SemanticScholarService:
             limit: Number of trending papers to return
             days_back: Consider papers from last N days (default 1095 = 3 years)
         """
-        # Current date for age calculation
-        end_date = datetime.now()
+        # Current date for age calculation (timezone-aware)
+        end_date = datetime.now(timezone.utc)
 
         # Search for papers using regular search (better citation sorting than bulk)
         # Use a default broad query if no field specified
@@ -212,8 +212,10 @@ class SemanticScholarService:
 
             try:
                 pub_date = datetime.fromisoformat(pub_date_str.replace("Z", "+00:00"))
-                pub_date_naive = pub_date.replace(tzinfo=None)
-                days_old = max(1, (end_date - pub_date_naive).days)
+                # Ensure pub_date is timezone-aware
+                if pub_date.tzinfo is None:
+                    pub_date = pub_date.replace(tzinfo=timezone.utc)
+                days_old = max(1, (end_date - pub_date).days)
 
                 # Citation velocity (citations per day)
                 velocity = citation_count / days_old
@@ -331,7 +333,7 @@ class SemanticScholarService:
             "flagged_sections": flagged_sections[:10],
             "citations": [],  # Will be added by citation suggestions if needed
             "similar_sources_count": len(similar_sources),
-            "checked_at": datetime.utcnow().isoformat(),
+            "checked_at": datetime.now(timezone.utc).isoformat(),
             "processing_time_seconds": round(processing_time, 2)
         }
 

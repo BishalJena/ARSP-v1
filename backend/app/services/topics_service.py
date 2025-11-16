@@ -172,9 +172,9 @@ class TopicsService:
         - Recency (newer papers get higher scores)
         - Source credibility
         """
-        import datetime
+        from datetime import datetime, timezone
 
-        current_year = datetime.datetime.now().year
+        current_year = datetime.now(timezone.utc).year
 
         for topic in topics:
             score = 0
@@ -214,9 +214,9 @@ class TopicsService:
 
         Returns citation trends and publication counts.
         """
-        import datetime
+        from datetime import datetime, timezone
 
-        current_year = datetime.datetime.now().year
+        current_year = datetime.now(timezone.utc).year
         start_year = current_year - years
 
         async with httpx.AsyncClient(timeout=30.0) as client:

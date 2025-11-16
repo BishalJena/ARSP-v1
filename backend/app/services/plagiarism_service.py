@@ -3,7 +3,7 @@ import httpx
 import numpy as np
 import re
 from typing import List, Dict, Any, Tuple
-from datetime import datetime
+from datetime import datetime, timezone
 import time
 from ..core.config import settings
 
@@ -106,7 +106,7 @@ class PlagiarismService:
                 "originality_score": round(originality_score, 2),
                 "flagged_sections": flagged_sections[:10],  # Limit to top 10
                 "citations": citations[:10],  # Limit to top 10
-                "checked_at": datetime.utcnow().isoformat(),
+                "checked_at": datetime.now(timezone.utc).isoformat(),
                 "processing_time_seconds": round(processing_time, 2)
             }
 

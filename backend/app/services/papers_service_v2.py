@@ -5,7 +5,7 @@ Replaces legacy PyPDF2 + BART approach with faster, better quality analysis.
 
 import io
 from typing import Dict, Any, Optional, List
-from datetime import datetime
+from datetime import datetime, timezone
 import json
 
 from ..core.config import settings
@@ -66,7 +66,7 @@ class EnhancedPapersService:
         """
         try:
             # Generate unique filename
-            timestamp = int(datetime.utcnow().timestamp())
+            timestamp = int(datetime.now(timezone.utc).timestamp())
             storage_path = f"{user_id}/{timestamp}_{file_name}"
 
             # Upload to Supabase storage (use admin client to bypass RLS for demo)
@@ -91,7 +91,7 @@ class EnhancedPapersService:
                 "file_size": len(file_content),
                 "mime_type": "application/pdf",
                 "processed": False,
-                "created_at": datetime.utcnow().isoformat()
+                "created_at": datetime.now(timezone.utc).isoformat()
             }
 
             result = supabase_admin.table("uploads").insert(paper_data).execute()
@@ -146,7 +146,7 @@ class EnhancedPapersService:
                 # "analysis": analysis,  # Skip if column doesn't exist (pending migration)
                 # "original_language": "en",  # Skip if column doesn't exist
                 # "paper_type": paper_type,  # Skip if column doesn't exist
-                # "processed_at": datetime.utcnow().isoformat()  # Skip if column doesn't exist
+                # "processed_at": datetime.now(timezone.utc).isoformat()  # Skip if column doesn't exist
             }
 
             # Initialize translation cache if not English (skip if column doesn't exist)
@@ -171,7 +171,7 @@ class EnhancedPapersService:
             supabase_admin.table("uploads").update({
                 "processed": False,
                 "error_message": str(e),
-                "processed_at": datetime.utcnow().isoformat()
+                "processed_at": datetime.now(timezone.utc).isoformat()
             }).eq("id", paper_id).execute()
 
             raise Exception(f"Paper processing failed: {str(e)}")

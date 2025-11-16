@@ -5,6 +5,50 @@ All notable changes to the ARSP Backend will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.1] - 2025-11-16
+
+### Fixed
+
+#### Timezone-Aware Datetime Handling
+- **Replaced deprecated `datetime.utcnow()`** with `datetime.now(timezone.utc)` across all services
+- **Fixed timezone-aware date comparisons** in `semantic_scholar_service.py` for accurate citation velocity calculations
+- **Updated all timestamp generation** to use timezone-aware datetimes (UTC standard)
+- **Resolved deprecation warnings** from Python 3.13 regarding `datetime.utcnow()` and `datetime.utcfromtimestamp()`
+
+#### Files Updated
+- `app/services/papers_service_v2.py` - 4 datetime occurrences updated
+- `app/services/papers_service.py` - 1 datetime occurrence updated
+- `app/services/semantic_scholar_service.py` - 2 datetime occurrences updated, fixed timezone-aware comparison
+- `app/services/plagiarism_service.py` - 1 datetime occurrence updated
+- `app/services/topics_service.py` - 2 datetime occurrences updated
+
+### Changed
+
+#### Code Quality
+- All datetime operations now use timezone-aware objects (UTC)
+- Improved compatibility with Python 3.13+ deprecation warnings
+- Better alignment with database schema (`TIMESTAMP WITH TIME ZONE` columns)
+
+### Technical Details
+
+#### Migration to Timezone-Aware Datetimes
+- **Before:** `datetime.utcnow()` (deprecated in Python 3.13)
+- **After:** `datetime.now(timezone.utc)` (timezone-aware, future-proof)
+- All timestamps stored in UTC, ready for user timezone conversion in future updates
+- Database already uses `TIMESTAMP WITH TIME ZONE`, so this aligns perfectly
+
+#### Future Enhancement Ready
+- Codebase now structured to easily support user-specific timezones
+- UTC standard maintained for backend operations (best practice)
+- Can be extended with user timezone preferences stored in user profiles
+
+### Testing
+- All 16 tests pass ✅
+- No datetime-related deprecation warnings from our code
+- Verified timezone-aware date calculations work correctly
+
+---
+
 ## [2.0.0] - 2025-11-16
 
 ### Added

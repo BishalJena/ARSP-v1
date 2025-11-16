@@ -3,7 +3,7 @@ import httpx
 import PyPDF2
 import io
 from typing import List, Dict, Any, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 from ..core.config import settings
 from ..core.supabase import supabase
 import time
@@ -395,7 +395,7 @@ class PapersService:
                 "insights": insights,
                 "references": references,
                 "language": "en",
-                "created_at": datetime.utcnow().isoformat(),
+                "created_at": datetime.now(timezone.utc).isoformat(),
                 "processing_time_seconds": processing_time
             }
 
