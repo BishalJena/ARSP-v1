@@ -202,6 +202,7 @@ class APIClient {
   async recommendJournals(data: {
     abstract: string;
     keywords: string[];
+    language?: string;
     preferences?: {
       open_access_only?: boolean;
       min_impact_factor?: number;
